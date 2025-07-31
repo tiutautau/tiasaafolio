@@ -3,12 +3,55 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import gsap from 'gsap';
 
 const canvas = document.querySelector("#experience-canvas");
 const sizes ={
     width: window.innerWidth,
     height: window.innerHeight
 };
+
+const modals = {
+    projects: document.querySelector(".modal.projects"),
+    showreel: document.querySelector(".modal.showreel"),
+    about: document.querySelector(".modal.about"),
+};
+
+document.querySelectorAll(".modal-exit-button").forEach(button=>{
+    button.addEventListener("click", (e)=>{
+        const modal = e.target.closest(".modal");
+        hideModal(modal);
+    });
+});
+
+const showModal = (modal) => {
+    modal.style.display = "block"
+
+    gsap.set(modal, { opacity: 0});
+
+    gsap.to(modal, {
+        opacity: 1,
+        duration: 0.5,
+    });
+};
+
+const hideModal = (modal) => {
+    gsap.to(modal, {
+        opacity: 0,
+        duration: 0.5,
+        onComplete: () => {
+            modal.style.display = "none";
+        },
+    });
+};
+
+const xAxisFans = []
+
+const raycasterObjects = [];
+let currentIntersects = [];
+
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
 
 // Loaders
 const textureLoader = new THREE.TextureLoader();
@@ -82,7 +125,26 @@ const videoTexture = new THREE.VideoTexture(videoElement)
 videoTexture.colorSpace = THREE.SRGBColorSpace;
 videoTexture.flipY = true;
 
-loader.load("/models/Portfolio_Room.glb", (glb) => {
+window.addEventListener("mousemove", (e)=>{
+    pointer.x = ( e.clientX / window.innerWidth ) * 2 - 1;
+	pointer.y = - ( e.clientY / window.innerHeight ) * 2 + 1;
+})
+
+window.addEventListener("click", (e) => {
+    if (currentIntersects.length > 0) {
+        const object = currentIntersects[0].object;
+
+        if (object.name.includes("Projects")) {
+            showModal(modals.projects)
+        }else if (object.name.includes("Showreel")) {
+            showModal(modals.showreel)
+        }else if (object.name.includes("Aboutme")) {
+            showModal(modals.about)
+        }
+    }
+})
+
+loader.load("/models/Portfolio_Room_V2.glb", (glb) => {
     glb.scene.traverse((child) => {
         if (child.isMesh) {
             // Turvavarmistus, että geometria on olemassa
@@ -90,6 +152,10 @@ loader.load("/models/Portfolio_Room.glb", (glb) => {
 
             if (!hasUVs) {
                 console.warn(`⚠ Mesh '${child.name}' is missing UVs.`);
+            }
+
+            if (child.name.includes("Raycaster")) {
+                raycasterObjects. push(child);
             }
 
             if (child.name.includes("Glass")) {
@@ -114,6 +180,12 @@ loader.load("/models/Portfolio_Room.glb", (glb) => {
                     child.material = new THREE.MeshBasicMaterial({
                         map: LoadedTextures.day[key],
                     });
+
+                    if (child.name.includes("tuuletin")) {
+                        if(child.name.includes("tuuletin_1") || child.name.includes("tuuletin_2") || child.name.includes("tuuletin_3")){
+                            xAxisFans.push(child);
+                        }
+                    }
 
                     if (child.material.map) {
                         child.material.map.minFilter = THREE.LinearFilter;
@@ -179,13 +251,41 @@ window.addEventListener("resize", () => {
 const render = () => {
     controls.update();
 
+    //Animate Fans
+xAxisFans.forEach(fan => {
+        fan.rotation.x -= 0.01;
+    });
+
   //  console.log(camera.position);
   //  console.log("000000000");
   //  console.log(controls.target);
 
-    renderer.render( scene, camera );
+// Raycaster
+  raycaster.setFromCamera( pointer, camera );
 
-    window.requestAnimationFrame(render);
+// calculate objects intersecting the picking ray
+currentIntersects = raycaster.intersectObjects(raycasterObjects);
+
+for ( let i = 0; i < currentIntersects.length; i ++ ) {
+}
+
+    if(currentIntersects.length>0){
+        const currentIntersectObject = currentIntersects[0].object
+
+        if(currentIntersectObject.name.includes("Pointer")){
+            document.body.style.cursor = "pointer"
+        }else{
+        document.body.style.cursor = "default"
+        }
+    }else{
+        document.body.style.cursor = "default"
+    }
+
+    
+
+renderer.render( scene, camera );
+
+window.requestAnimationFrame(render);
 };
 
 render();
