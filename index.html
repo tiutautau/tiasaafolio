@@ -1,26 +1,172 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
-  </head>
-  <body>
-    <div id="app"></div>
+    <title>Tia Saarinen's portfolio</title>
+    <link rel="stylesheet" href="./src/style.scss" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+US+Modern:wght@100..400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=music_off" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=music_note" />
+    <meta name="language" content="English" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/media/og-image.webp" />
 
-    <div class="projects modal">
-      <h1 class="modal title">projectsprojectsprojectsprojectsprojectsprojectsprojectsprojects</h1>
-      <button class="modal-exit-button">EXIT MODAL</button>
+    <meta
+      property="og:description"
+      content="Welcome, I'm Tia Saarinen. This is my portfolio website!"
+    />
+
+  </head>
+  <body class="light-theme">
+
+    <!-- Mute toggle button and icons -->
+    <button class="mute-toggle-button toggle-buttons" aria-label="Toggle sound">
+      <svg class="sound-on-svg sound-svg active" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+        <path d="M3 9v6h4l5 5V4L7 9H3z" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      <svg class="sound-off-svg sound-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+        <path d="M16.5 12c0-1.77-.77-3.29-2-4.29M19 12c0-2.5-1-4.71-2.5-6.29M3 9v6h4l5 5V4L7 9H3z" stroke="currentColor" stroke-width="2"/>
+        <line x1="21" y1="3" x2="3" y2="21" stroke="currentColor" stroke-width="2"/>
+      </svg>
+    </button>
+
+    <div class="loading-screen">
+      <button class="loading-screen-button">
+        Loading...
+      </button>
+      <button class="no-sound-button">
+        
+      </button>
+
+      <p class="desktop-instructions instructions">use left/right click and mouse wheel to navigate.</p>
+      <p class="mobile-instructions instructions">use one or two fingers to navigate.</p>
     </div>
-    <div class="showreel modal">
-      <h1 class="modal title">showreelhowreelhowreelhowreelhowreelhowreelhowreelhowreelhowreel</h1>
-      <button class="modal-exit-button">EXIT MODAL</button>
+    
+<div class="overlay"></div>
+
+<div class="modal projects">
+  <div class="modal-wrapper">
+    <h2 class="modal-title">Projects</h2>
+    <p class="modal-paragraph-text">
+      Here are some of my highlighted projects.
+    </p>
+
+      <div class="project-cards">
+        <article class="project-card">
+          <div class="project-media">
+          <img src="images/juoma.jpg" alt="tuotekuva">
+            </div>
+          <div>
+              <h3>Heloust haloust</h3>
+          </div>
+          
+        </article>
+
+        <article class="project-card">
+          <div class="project-media">
+          <img src="images/lappari.jpg" alt="tuotekuva2">
+            </div>
+          <div>
+              <h3>Heloust haloust</h3>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-media">
+          <img src="images/kuulokkeet.jpg" alt="tuotekuva3">
+            </div>
+          <div>
+            <h3>Heloust haloust</h3>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-media">
+          <img src="images/viher.jpg" alt="tuotekuva4">
+            </div>
+          <div>
+            <h3>Heloust haloust</h3>
+          </div>
+        </article>
+      </div>
+
+    <button class="modal-exit-button"><img src="media/icons/exit.png" alt="Exit" /></button>
+  </div>
+</div>
+<div class="blurBackground"></div>
+<div class="modal project-detail">
+  
+  <div class="modal-wrapper">
+    <h2 class="modal-title">Project Details</h2>
+    <div class="project-detail-content">
+        <div class="project-detail-media">
+          <img class="project-detail-image" src="" alt="Project Image" />
+        </div>
+        <div>
+          <p class="project-detail-description">asdf</p>
+          <p>asdf</p>
+        </div>
     </div>
-    <div class="about modal">
-      <h1 class="modal title">aboutaboutaboutaboutaboutaboutaboutaboutaboutaboutaboutaboutabout</h1>
-      <button class="modal-exit-button">EXIT MODAL</button>
-    </div>
+    <button class="modal-exit-button project-detail-exit"><img src="media/icons/exit.png" alt="Exit" /></button>
+  </div>
+</div>
+
+<div class="overlay"></div>
+
+<div class="modal showreel">
+  <div class="modal-wrapper">
+    <h3 class="modal-title">Showreel</h3>
+        <article class="project-card">
+          <div class="project-media">
+          <iframe width="720" height="400" src="https://www.youtube.com/embed/jgB2KZguwS0">
+          </iframe>
+            </div>
+          <div class="showreel-description">
+              <p>My motion graphics/generalist showreel of 2025.</p>
+          </div>
+        </article>
+    <button class="modal-exit-button"><img src="media/icons/exit.png" alt="Exit" /></button>
+  </div>
+</div>
+
+<div class="overlay"></div>
+
+<div class="modal about">
+  <div class="modal-wrapper">
+    <h2 class="modal-title">About me</h2>
+      <div class="about-cards">
+        <article class="about-card">
+          <div class="about-media">
+          <img src="images/koira.webp" alt="koira"/>
+            </div>
+        </article>
+        <article class="about-card">
+          <div> 
+            <h1 class="modal-name">Tia Saarinen</h1>
+            </div>
+            <div class="about-text1">
+            <p class="about-text1-p">
+              Motion Graphics student at Metropolia University of Applied Sciences.
+            </p>
+            <p class="about-text1-p">
+              Location Espoo, Finland.
+            </p>
+          </div>
+          <div class="about-text2"> 
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+          </div>
+      </div>
+
+    <button class="modal-exit-button"><img src="media/icons/exit.png" alt="Exit" /></button>
+  </div>
+</div>
 
     <div id="experience">
       <canvas id="experience-canvas" class="experience-canvas"></canvas>

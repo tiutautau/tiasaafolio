@@ -56,15 +56,15 @@ const sizes = {
 
 // Scene
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xebae34);
+//scene.background = new THREE.Color(0xebae34);
 
 // Lights
-const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+const ambientLight = new THREE.AmbientLight(0xfffef5, 2);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-directionalLight.position.set(10, 10, 10);
-scene.add(directionalLight);
+//const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+//directionalLight.position.set(10, 10, 10);
+//scene.add(directionalLight);
 
 const camera = new THREE.PerspectiveCamera(
   35,
@@ -314,36 +314,38 @@ function playReveal() {
         isModalOpen = false;
       },
     },
-    "-=1.0" // Overlap with the camera arc animation
+    "-=0.8" // Overlap with the camera arc animation
   );
 
-  // Camera arc animation
-  animateCameraArc(t1); // Pass the timeline to synchronize with the loading screen
+  // Camera arc animation (overlaps with the above)
+  animateCameraArc(t1, "-=0.8"); // pass relative position
 }
 
-function animateCameraArc(timeline) {
-  const target = new THREE.Vector3(2.5, 3.2, -2);
+function animateCameraArc(t1, overlap = 0) {
+  const target = new THREE.Vector3(0, 3, 0);
 
   // Start above
-  camera.position.set(5, 70, 0);
+  camera.position.set(1, 40, 1);
   controls.target.copy(target);
   controls.update();
 
   const spherical = new THREE.Spherical();
   spherical.setFromVector3(camera.position.clone().sub(target));
 
-  timeline.to(spherical, {
-    duration: 4,
+  t1.to(spherical, {
+    duration: 3,
     phi: Math.PI / 2.5, // from top → angled
-    ease: "power2.inOut",
+    ease: "power1.Out",
     onUpdate: () => {
       camera.position.copy(
         new THREE.Vector3().setFromSpherical(spherical).add(target)
       );
       controls.target.copy(target);
       controls.update();
+      },
     },
-  });
+    overlap // <-- controls when it starts relative to the previous animation
+  );
 }
 
 function startSecondaryAnimations() {
@@ -444,13 +446,13 @@ const environmentMap = new THREE.CubeTextureLoader()
 
 const textureMap = {
   Eka: {
-    day: "textures/room/TextureOne.webp"
+    day: "textures/room/FirstText.webp"
   },
   Toka: {
-    day: "textures/room/TextureTwo.webp"
+    day: "textures/room/SecondText.webp"
   },
   Kolmas: {
-    day: "textures/room/TextureThree.webp"
+    day: "textures/room/ThirdText.webp"
   },
   Neljas: {
     day: "textures/room/TextureSetFour.webp"
@@ -468,22 +470,22 @@ Object.entries(textureMap).forEach(([key, paths]) => {
   LoadedTextures.day[key] = dayTexture;
 });
 
-const projectsMaterial = new THREE.MeshPhysicalMaterial({
-  //color: 808080,         
-  metalness: 1,
-  roughness: 0,
-  clearcoat: 0.5,
-  clearcoatRoughness: 0.1,
-  reflectivity: 0.5,
-  transmission: 1,         // 0 = opaque, >0 = glassy
-  ior: 1.45,
-  //iridescence: 1,
-  //iridescenceIOR: 1,
-  envMap: environmentMap,
-  envMapIntensity: 1,
-  emissive: new THREE.Color(0x4F4F2D), 
-  emissiveIntensity: 1, // Adjust intensity as needed
-});
+//const projectsMaterial = new THREE.MeshPhysicalMaterial({
+//  //color: 808080,         
+//  metalness: 1,
+//  roughness: 0,
+//  clearcoat: 0.5,
+//  clearcoatRoughness: 0.1,
+//  reflectivity: 0.5,
+//  transmission: 1,         // 0 = opaque, >0 = glassy
+//  ior: 1.45,
+//  //iridescence: 1,
+//  //iridescenceIOR: 1,
+//  envMap: environmentMap,
+//  envMapIntensity: 1,
+//  emissive: new THREE.Color(0x4F4F2D), 
+//  emissiveIntensity: 1, // Adjust intensity as needed
+//});
 
 const glassMaterial = new THREE.MeshPhysicalMaterial({
   transmission: 1,
@@ -673,24 +675,27 @@ videoElement.play().catch((error) => {
 
 const videoTexture = new THREE.VideoTexture(videoElement);
 videoTexture.colorSpace = THREE.SRGBColorSpace;
-videoTexture.flipY = true; // Ensure the video texture is not flipped vertically
+videoTexture.flipY = false; // Ensure the video texture is not flipped vertically
 videoTexture.wrapS = THREE.RepeatWrapping; // Allow horizontal flipping
 videoTexture.repeat.x = -1; // Flip the texture horizontally
 
-loader.load("/models/Portfolio_Room_V5.glb", (glb) => {
+loader.load("/models/PortfolioRoomCozy_V2.glb", (glb) => {
   glb.scene.traverse((child) => {
     if (child.isMesh) {
+      console.log(child.name, child.material.name, child.material.transparent, child.material.opacity, child.material.depthWrite);
       Object.keys(textureMap).forEach((key) => {
       if (child.name.includes(key)) {
         const material = new THREE.MeshStandardMaterial({
           map: LoadedTextures.day[key],
         });
-
+        child.material.transparent = false;
+        child.material.opacity = 1;
+        child.material.depthWrite = true;
         child.material = material;
       }
 
     if (child.name.includes("Projects") || child.name.includes("Showreel") || child.name.includes("Aboutme")) {
-      child.material = projectsMaterial;
+      //child.material = projectsMaterial;
       raycasterObjects.push(child);
       child.userData.initialScale = child.scale.clone();
       child.userData.initialPosition = child.position.clone();
@@ -776,29 +781,29 @@ loader.load("/models/Portfolio_Room_V5.glb", (glb) => {
 });
 
 // Create a plane with a 16:9 aspect ratio for the video texture
-const videoPlaneGeometry = new THREE.PlaneGeometry(16, 9);
+//const videoPlaneGeometry = new THREE.PlaneGeometry(16, 9);
 
 // Adjust the UV mapping to flip the texture horizontally
-const uvAttribute = videoPlaneGeometry.attributes.uv;
-for (let i = 0; i < uvAttribute.count; i++) {
-  const u = uvAttribute.getX(i);
-  uvAttribute.setX(i, 1 - u); // Flip the U coordinate
-}
-uvAttribute.needsUpdate = true;
-
-const videoPlaneMaterial = new THREE.MeshBasicMaterial({
-  map: videoTexture,
-  transparent: true,
-  opacity: 0.9,
-});
-const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
-
-// Scale the plane to fit your scene as needed
-videoPlane.scale.set(1, 1, 1); // Adjust scale if necessary
-scene.add(videoPlane);
-
-// Position the plane in the scene
-videoPlane.position.set(5, 10, -10); // Adjust position as needed
+//const uvAttribute = videoPlaneGeometry.attributes.uv;
+//for (let i = 0; i < uvAttribute.count; i++) {
+//  const u = uvAttribute.getX(i);
+//  uvAttribute.setX(i, 1 - u); // Flip the U coordinate
+//}
+//uvAttribute.needsUpdate = true;
+//
+//const videoPlaneMaterial = new THREE.MeshBasicMaterial({
+//  map: videoTexture,
+//  transparent: true,
+//  opacity: 0.9,
+//});
+//const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
+//
+//// Scale the plane to fit your scene as needed
+//videoPlane.scale.set(1, 1, 1); // Adjust scale if necessary
+//scene.add(videoPlane);
+//
+//// Position the plane in the scene
+//videoPlane.position.set(5, 10, -10); // Adjust position as needed
 
 // TEXT HOVER ANIMATION
 

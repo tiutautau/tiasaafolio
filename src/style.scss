@@ -1,3 +1,17 @@
+// Import statements
+@use "./styles/reset.scss";
+@use "./styles/variables.scss" as vars;
+@use "./styles/defaults.scss" as media;
+
+// Global Styles
+:root {
+  font-family: Fruktur, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -8,17 +22,51 @@ body {
   overflow: hidden;
 }
 
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+// Theme Configuration
+$themes: (
+  light: (
+    base-dark-purple: #9caa9f,
+    base-purple: #ff4141,
+    base-purple-200: #5e3636,
+    base-pink: #ffffff,
+    base-light-purple: #442e2e,
+    header-text: #ffffff,
+    text: #020202,
+    svgs: #ffffff,
+    base-overlay: rgba(32, 32, 32, 0.2),
+    overlay-bg: rgba(112, 252, 78, 0.952),
+  ),
+);
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+// Theme Mixins and Functions
+@mixin themed() {
+  @each $theme, $map in $themes {
+    .#{$theme}-theme & {
+      $theme-map: () !global;
+      @each $key, $value in $map {
+        $theme-map: map-merge(
+          $theme-map,
+          (
+            $key: $value,
+          )
+        ) !global;
+      }
+      @content;
+      $theme-map: null !global;
+    }
+  }
 }
 
-// Experience
+@function t($key, $fallback: null) {
+  @if (map-has-key($theme-map, $key)) {
+    @return map-get($theme-map, $key);
+  }
+  @return $fallback;
+}
 
+
+
+// Layout and Components
 #experience {
   position: fixed;
   height: 100%;
@@ -27,20 +75,697 @@ body {
   left: 0;
   overflow: hidden;
 
-  #experience-canvas{
+  #experience-canvas {
     height: 100%;
     width: 100%;
+    z-index: 2;
+    pointer-events: none;
   }
 }
 
-//Modals
-.modal {
+// Typography
+// <weight>: Use a value from 100 to 400
+// <uniquifier>: Use a unique and descriptive class name
+
+.playwrite-us-modern {
+  font-family: "Playwrite US Modern", cursive;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+p, ul, li {
+  font-family: "Helvetica", sans-serif;
+}
+
+h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 8px 0px 12px 0px;
+  line-height: 1;
+  font-family: "Haettenschweiler", 'Arial Narrow Bold', sans-serif;
+  color: rgb(41, 41, 41);
+}
+
+ul {
+  list-style: none;
+  padding-left: 2rem;
+
+  li {
+    position: relative;
+    margin-bottom: 1rem;
+
+    &:before {
+      content: "•";
+      position: absolute;
+      left: -1.5rem;
+      color: rgb(255, 255, 255);
+      font-size: 1.5em;
+    }
+
+    ul {
+      margin-top: 0.5rem;
+
+      li:before {
+        content: "◦";
+        font-size: 1.2em;
+      }
+
+      ul li:before {
+        content: "▪";
+        font-size: 1em;
+      }
+    }
+  }
+
+  li:hover {
+    &:before {
+      color: vars.$base-dark-purple;
+      transform: scale(1.2);
+      transition: all 0.2s ease;
+    }
+  }
+}
+
+// Buttons
+.loading-screen-button {
+  font-family: "Playwrite US Modern", sans-serif;
+  @include vars.centered;
+  background-color: rgb(0, 0, 0) !important;
+  padding: 10px 60px;
+  border-radius: 1rem;
+  border: none;
+  font-size: 80px;
+
+  @include media.media("<=tablet") {
+    font-size: 32px;
+  }
+}
+
+.modal-exit-button {
+  @include vars.centered;
   position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  padding: 10px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: rgba(109, 109, 109, 0.4) 0px 3px 10px;
+
+  &:hover {
+    transform: scale(1.3);
+  }
+
+  @include media.media("<=tablet") {
+    // Reset the top and left positions
+    top: auto;
+    left: 50%;
+    bottom: -3rem;
+    transform: translateX(-50%);
+
+    &:hover {
+      transform: translateX(-50%) scale(1.3);
+    }
+  }
+}
+
+.toggle-buttons {
+  @include vars.centered;
+  background-color: rgb(0, 0, 0);
+  padding: 12px;
+  color: rgba(255, 255, 255); //kuviovari
+  border: #000000;
+  border-radius: 1rem;
+  cursor: pointer;
+  box-shadow: rgba(109, 109, 109, 0.6) 0px 0px 15px;
+}
+
+// Toggle Button
+.mute-toggle-button {
+  position: fixed;
+  top: 36px;
+  right: 100px;
+  z-index: 1002; // Ensure buttons are above modals
+  cursor: pointer;
+
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  &:hover {
+    transform: scale(1.3);
+  }
+
+  @include media.media("<=tablet") {
+    top: 30px;
+    right: 96px;
+  }
+}
+
+// No Sound Button
+.no-sound-button {
+  font-family: "Helvetica", sans-serif;
+  @include vars.centered;
+  background-color: transparent;
+  border: none;
+  color: #b4b4b4;
+
+  position: absolute;
+  bottom: 38%;
+  left: 50%;
+  font-size: 20px;
+  transform: translate(-50%, -50%);
+
+  &:hover {
+    color: #ffffff;
+    cursor: pointer;
+  }
+}
+
+
+// --- Background Blur for Modals ---
+.blurBackground {
+   z-index: 1000; // Lower than modals
+    opacity: 0.7;
+    background-color: rgba(0, 0, 0, 0.5); // Ensure it's semi-transparent
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none; // Ensure it's hidden by default
+}
+
+// All MODALS
+.modal {
+  @include vars.centered;
+  background: #fff;
+  border: none;
+  border-radius: 0;
+  padding: 2rem;
+  position: fixed;
+  left: 50%;
+  top: 50%; // add this line
+  width: 100%;
+  max-width: 1400px;
+  height: auto;
+  transform: translate(-50%, -50%); // ensure this is present
+  z-index: 1001; // Ensure modals are above blurBackground
+  display: none;
+}
+
+.modal-wrapper {
+  @include vars.centered;
+  width: 100%;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sm-margin-top {
+  margin-top: 12px;
+}
+
+.modal-paragraph-header {
+  font-size: 1.2rem;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  @include media.media("<=tablet") {
+    font-size: 1.3rem;
+  }
+}
+
+.modal-paragraph-header-2 {
+  border-top: 2px solid rgb(0, 0, 0);
+  font-size: 1.5rem;
+  padding-top: 24px;
+  margin-bottom: 8px;
+  @include media.media("<=tablet") {
+    font-size: 1.3rem;
+  }
+}
+
+.modal-paragraph-text {
+  font-size: 1rem;
+  @include media.media("<=tablet") {
+    font-size: 1.3rem;
+  }
+}
+
+.list-text {
+  font-size: 1.2rem;
+  @include media.media("<=tablet") {
+    font-size: 1.3rem;
+  }
+}
+
+.list-text-2 {
+  font-size: 1.2rem;
+  @include media.media("<=tablet") {
+    font-size: 1.3rem;
+  }
+}
+
+.modal-content {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+
+  @include media.media("<=tablet") {
+    height: 350px;
+  }
+}
+
+.image-wrapper {
+  width: 30%;
+  height: 300px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  @include media.media("<=tablet") {
+    height: auto;
+  }
+}
+
+.base-image {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 4px solid vars.$base-purple;
+}
+
+.overlay {
+  @include vars.centered;
+  overflow: hidden;
+  position: fixed;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.overlay.active {
+  display: block;
+}
+
+
+
+// --- Modal Projects ---
+.modal.projects {
+  width: 100%;
+  display: none; // JS näyttää sen
+  flex-direction: column;
+  padding: 80px 60px 40px 60px; // top, right, bottom, left (right side more padding)
+  border-radius: 12px;
+  max-height: 95vh;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 15px; // vertical scrollbar thickness
+    height: 8px; // horizontal scrollbar thickness
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #d2f77b; // thumb color (purple/red)
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #e0e0e0; // track color
+    border-radius: 8px;
+  }
+
+  .modal-title {
+    font-size: 3rem;
+    margin-bottom: 8px;
+    color: rgb(0, 0, 0);
+    text-align: center;
+  }
+
+  .modal-paragraph-text {
+    font-size: 1.25rem;
+    color: rgb(138, 138, 138);
+    font-family: "Haettenschweiler", 'Arial Narrow Bold', sans-serif;
+    margin-bottom: 34px;
+    text-align: center;
+  }
+}
+
+// --- Showreel ---
+.modal.showreel {
+  width: 100%;
+  max-width: 1200px;
+  display: none;
+  flex-direction: column;
+  padding: 60px 40px 40px 40px;
+  border-radius: 12px;
+  max-height: 95vh;
+  overflow-y: auto;
+
+  .modal-wrapper {
+  gap: 6px;
+  }
+
+  .modal-title {
+    font-size: 3rem;
+    //margin-bottom: 8px;
+    color: rgb(0, 0, 0);
+    text-align: center;
+  }
+
+  .project-media {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .showreel-description {
+    font-size: 1.1rem;
+    color: rgb(138, 138, 138);
+    font-family: "Haettenschweiler", 'Arial Narrow Bold', sans-serif;
+    margin-top: 12px;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+}
+
+.showreel .modal-content-wrapper {
+  overflow: visible;
+}
+
+// --- Modal About ---
+.modal.about {
+  width: 100%;
+  max-width: 1200px;
+  height: 80vh;
+  max-height: 95vh;
+  display: none;
+  flex-direction: column;
+  padding: 80px 60px 40px 60px; // top, right, bottom, left (right side more padding)
+  border-radius: 12px;
+  // overflow-y: auto;
+
+  .modal-title {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    color: rgb(0, 0, 0);
+    text-align: center;
+  }
+
+  .modal-name {
+    font-size: 1.4rem;
+    color: rgb(0, 0, 0);
+    font-family: "Haettenschweiler", 'Arial Narrow Bold', sans-serif;
+    margin-bottom: 30px;
+    text-align: left;
+  }
+
+  .about-cards{
+    display: grid;
+    justify-content: center;
+    align-items: start; 
+    gap: 3rem;
+    grid-template-columns: auto auto; // each column gets 50%
+  }
+
+  .about-card img {
+    display: block;
+    margin: 0 auto;  // centers the image horizontally
+    max-width: 100%;
+    height: auto;
+  }
+
+  .about-media {
+    width: auto;
+    height: 100%;
+  }
+
+  .modal-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .about-text1 {
+    font-size: 1rem;
+    color: rgb(51, 51, 51);
+    font-family: "Haettenschweiler", 'Arial Narrow Bold', sans-serif;
+    text-align: left;
+    
+    .about-text1-p {
+      margin-top: 10px;
+    }
+  }
+
+  .about-text2 {
+    font-size: 1.1rem;
+    color: rgb(138, 138, 138);
+    font-family: "Haettenschweiler", 'Arial Narrow Bold', sans-serif;
+    margin-top: 30px;
+    text-align: left;
+  }
+}
+
+.project-cards{
+display: grid;
+gap: 1rem;
+//grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); //shows as many cards as fit per row
+grid-template-columns: repeat(3, 1fr); // Show 3 cards per row
+}
+
+.project-card {
+  background: white;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .project-media {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    position: relative;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .35s ease;
+      will-change: transform;
+    }
+  }
+
+  &:hover img {
+    transform: scale(1.04);
+  }
+}
+
+.project-card:hover img{
+transform: scale(1.04);
+}
+
+// --- Work ---
+//.work-image-wrapper {
+//  width: 100%;
+//  height: 350px;
+//  overflow: hidden;
+//  margin-bottom: 12px;
+//}
+
+//.work-base-image {
+//  height: 100%;
+//  width: 100%;
+//  border-radius: 24px;
+//  object-fit: cover;
+//  border: 4px solid vars.$base-purple;
+//}
+
+//.work-project {
+//  padding-top: 16px;
+//  @include vars.centered;
+//  flex-direction: column;
+//  gap: 28px;
+//  width: 80%;
+//  justify-content: start;
+//  height: 100%;
+//  @include media.media("<=tablet") {
+//    height: auto;
+//    width: 100%;
+//    padding-bottom: 24px;
+//  }
+//}
+
+//.work-project-wrapper {
+//  width: 100%;
+//  height: auto;
+//}
+
+// En tiia mika taa on
+.xsm-margin-top {
+  margin: 12px;
+}
+
+// --- SVG Icons ---
+.sound-on-svg,
+.sound-off-svg {
+  display: none;
+}
+
+.sound-on-svg.active,
+.sound-off-svg.active {
+  display: block;
+}
+
+.sound-svg {
+  width: 30px;
+  height: 30px;
+
+  @include media.media("<=tablet") {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.sound-off-svg {
+  width: 30px;
+  height: 30px;
+  @include media.media("<=tablet") {
+    top: 30px;
+    right: 96px;
+  }
+  @include media.media("<=tablet") {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.sound-svg,
+.sound-off-svg,
+.linkedin,
+.instagram,
+.mail {
+  @include themed() {
+  }
+}
+
+.contact-button-wrapper {
+  @include vars.centered;
+  margin-top: 24px;
+  justify-content: space-between;
+}
+
+.contact-svg {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.linkedin {
+  width: 60px;
+  height: 60px;
+  &:hover {
+    transform: rotate(15deg) scale(1.3);
+  }
+}
+
+.instagram {
+  width: 63px;
+  height: 63px;
+  &:hover {
+    transform: rotate(35deg) scale(1.3);
+  }
+}
+
+.mail {
+  width: 68px;
+  height: 68px;
+  &:hover {
+    transform: rotate(-35deg) scale(1.3);
+  }
+}
+
+// --- Loading Screen ---
+.loading-screen {
+  @include vars.centered;
+  position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 32px;
-  z-index: 9999;
-  display: none;
-  background-color: black;
+  width: 108vw;
+  height: 108vh;
+  margin-left: -54vw;
+  margin-top: -54vh;
+  overflow: hidden;
+  z-index: 999999;
+  background-color: #000000;
+  transform: perspective(1000px);
+  border-radius: 48px;
 }
+
+
+// --- Instructions ---
+.instructions {
+  @include vars.centered;
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  max-width: 1200px;
+  width: 90%;
+  font-size: 20px;
+  transform: translate(-50%, -50%);
+  font-family: "Helvetica", sans-serif;
+  color: #cacaca;
+}
+
+.desktop-instructions {
+  @include media.media("<tablet") {
+    display: none;
+  }
+}
+
+.mobile-instructions {
+  @include media.media(">=tablet") {
+    display: none;
+  }
+  @include media.media("<=tablet") {
+    font-size: 28px;
+  }
+}
+
+//Tarviiko naita?
+//.popup-description{
+//.popup-description{
+    //&:hover {
+     // transform: translateY(-5px);
+     // box-shadow: 0 8px 20px rgba(0,0,0,0.12); transform: translateY(-5px);
+    //}     // box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    //}
+
+ // @media (min-width: 700px){
+ //     .cards{ grid-template-columns: repeat(3, 1fr); }
+ //   }
+ // }
+
+ //--- Theme Toggle Button ---
+//.theme-toggle-button {
+//  position: fixed;
+//  top: 36px;
+//  right: 48px;
+//  z-index: 2;
+//  cursor: pointer;
+//
+//  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+//  &:hover {
+//    transform: scale(1.3);
+//  }
+//
+//  @include media.media("<=tablet") {
+//    top: 30px;
+//    right: 18px;
+//  }
