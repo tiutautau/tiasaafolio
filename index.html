@@ -4,13 +4,19 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tia Saarinen's portfolio</title>
+    <title>Tia Saarinen portfolio</title>
     <link rel="stylesheet" href="./src/style.scss" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playwrite+US+Modern:wght@100..400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=music_off" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=music_note" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
     <meta name="language" content="English" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:type" content="website" />
@@ -23,6 +29,10 @@
 
   </head>
   <body class="light-theme">
+    <div class="top-left-corner">
+      <h1 class="logo">Tia Saarinen</h1>
+      <h1 class="logo2">Portfolio</h1>
+    </div>
 
     <!-- Mute toggle button and icons -->
     <button class="mute-toggle-button toggle-buttons" aria-label="Toggle sound">
@@ -35,17 +45,31 @@
       </svg>
     </button>
 
-    <div class="loading-screen">
+  <div class="loading-screen">
+    <div class="buttons-wrapper">
       <button class="loading-screen-button">
         Loading...
       </button>
       <button class="no-sound-button">
-        
       </button>
-
       <p class="desktop-instructions instructions">use left/right click and mouse wheel to navigate.</p>
       <p class="mobile-instructions instructions">use one or two fingers to navigate.</p>
     </div>
+<div class="loading-wrapper">
+      <div class="shapes1">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+      <div class="shapes2">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+      <div class="gradient">
+      </div>
+    </div>
+  </div>
     
 <div class="overlay"></div>
 
@@ -56,74 +80,144 @@
       Here are some of my highlighted projects.
     </p>
 
-      <div class="project-cards">
-        <article class="project-card">
-          <div class="project-media">
-          <img src="images/juoma.jpg" alt="tuotekuva">
-            </div>
-          <div>
-              <h3>Heloust haloust</h3>
-          </div>
-          
-        </article>
+    <div class="project-cards">
+      <article class="project-card" data-modal="project1-modal">
+        <div class="project-media">
+          <img src="images/Leipuri.webp" alt="Taydenna tarinaa game">
+        </div>
+        <h3>Täydennä tarinaa</h3>
+      </article>
 
-        <article class="project-card">
-          <div class="project-media">
-          <img src="images/lappari.jpg" alt="tuotekuva2">
-            </div>
-          <div>
-              <h3>Heloust haloust</h3>
-          </div>
-        </article>
+      <article class="project-card" data-modal="project2-modal">
+        <div class="project-media">
+          <img src="images/tontut.webp" alt="Tonttu character">
+        </div>
+        <h3>Tonttu</h3>
+      </article>
 
-        <article class="project-card">
-          <div class="project-media">
-          <img src="images/kuulokkeet.jpg" alt="tuotekuva3">
-            </div>
-          <div>
-            <h3>Heloust haloust</h3>
-          </div>
-        </article>
+      <article class="project-card" data-modal="project3-modal">
+        <div class="project-media">
+          <img src="images/folioroom.webp" alt="Portfolio room">
+        </div>
+        <h3>Portfolio room</h3>
+      </article>
 
-        <article class="project-card">
-          <div class="project-media">
-          <img src="images/viher.jpg" alt="tuotekuva4">
-            </div>
-          <div>
-            <h3>Heloust haloust</h3>
-          </div>
-        </article>
-      </div>
+      <article class="project-card" data-modal="project4-modal">
+        <div class="project-media">
+          <img src="images/Plant.webp" alt="Plant simulation">
+        </div>
+        <h3>Plant simulation</h3>
+      </article>
+
+      <article class="project-card" data-modal="project5-modal">
+        <div class="project-media">
+          <img src="images/minnaetusivu.webp" alt="Lakipalvelu website">
+        </div>
+        <h3>Lakipalvelu Minna Ikonen</h3>
+      </article>
+      
+      <article class="project-card" data-modal="project7-modal">
+        <div class="project-media">
+          <img src="images/Jungle.webp" alt="Portfolio room">
+        </div>
+        <h3>Jungle title animation</h3>
+      </article>
+    </div>
 
     <button class="modal-exit-button"><img src="media/icons/exit.png" alt="Exit" /></button>
   </div>
 </div>
+
 <div class="blurBackground"></div>
-<div class="modal project-detail">
-  
+<div class="blurBackgroundDetail"></div>
+
+<!-- 🟠 PROJECT DETAIL MODALS -->
+<!-- Project 1 -->
+<div class="modal project-detail" id="project1-modal">
   <div class="modal-wrapper">
-    <h2 class="modal-title">Project Details</h2>
-    <div class="project-detail-content">
-        <div class="project-detail-media">
-          <img class="project-detail-image" src="" alt="Project Image" />
-        </div>
-        <div>
-          <p class="project-detail-description">asdf</p>
-          <p>asdf</p>
-        </div>
+    <h2 class="modal-title">Täydennä tarinaa</h2>
+
+  <div class="project-content">
+    <div class="slideshow">
+      <div class="mySlides1"><img src="images/Leipuri.webp" alt=""></div>
+      <div class="mySlides1"><img src="images/tarinapeli2.webp" alt=""></div>
+      <a class="prev" data-slideshow="1">&#10094;</a>
+      <a class="next" data-slideshow="1">&#10095;</a>
     </div>
-    <button class="modal-exit-button project-detail-exit"><img src="media/icons/exit.png" alt="Exit" /></button>
+
+    <div class="project-info">
+      <div class="project-text-short">
+        <p>
+          Educational storytelling game developed with Kehitysvammaliitto and Metropolia to promote language learning through play. The game introduces players to narrative-building
+          mechanics that adapt to user choices. Priority was given to accessibility and inclusivity in both design and content.
+        </p>
+      </div>
+      <div class="project-text-long">
+        <p>
+          In this project, I worked with a team to come up with the layout design, overall style and game assets. I was responsible for music design and I also made many of the game assets.
+        </p>
+      </div>
+    </div>
+  </div>
+
+    <button class="modal-exit-button">
+      <img src="media/icons/exit.png" alt="Exit" />
+    </button>
   </div>
 </div>
 
-<div class="overlay"></div>
+<!-- Project 2 -->
+<div class="modal project-detail" id="project2-modal">
+  <div class="modal-wrapper">
+    <h2 class="modal-title">Tonttu character</h2>
+    <div class="project-content">
+    <div class="slideshow">
+      <div class="mySlides2"><img src="images/tonttuesittely.webp" alt=""></div>
+      <div class="mySlides2"><img src="images/viher.jpg" alt=""></div>
+      <a class="prev" data-slideshow="2">&#10094;</a>
+      <a class="next" data-slideshow="2">&#10095;</a>
+    </div>
+    <p class="project-description">
+      Tonttu was originally designed for a school assignment which was to come up with a game concept and draw a presentation for that game. Then in 3D class I modelled that character put it in Unreal Engine and made a little game demo of him.
+    </p>
+    </div>
+
+    <button class="modal-exit-button">
+      <img src="media/icons/exit.png" alt="Exit" />
+    </button>
+  </div>
+</div>
+
+<!-- Project 3 -->
+<div class="modal project-detail" id="project3-modal">
+  <div class="modal-wrapper">
+    <h2 class="modal-title">Portfolio room</h2>
+    <div class="project-content">
+    <div class="slideshow">
+      <div class="mySlides3"><img src="images/folioroom.webp" alt="isometric room"></div>
+      <div class="mySlides3"><img src="images/huone.webp" alt=""></div>
+      <a class="prev" data-slideshow="3">&#10094;</a>
+      <a class="next" data-slideshow="3">&#10095;</a>
+    </div>
+    <p class="project-description">
+      3D modelled room made with Blender. The idea was to create a cozy and inviting space that reflects my personality and I could use it for my portfolio website.
+    </p>
+    </div>
+
+    <button class="modal-exit-button">
+      <img src="media/icons/exit.png" alt="Exit" />
+    </button>
+  </div>
+</div>
+
+<!--  <div class="overlay"></div> -->
 
 <div class="modal showreel">
   <div class="modal-wrapper">
-    <h3 class="modal-title">Showreel</h3>
+    <h2 class="modal-title">Showreel</h2>
         <article class="project-card">
           <div class="project-media">
-          <iframe width="720" height="400" src="https://www.youtube.com/embed/jgB2KZguwS0">
+          <iframe width="960" height="540" src="https://www.youtube.com/embed/jgB2KZguwS0">
           </iframe>
             </div>
           <div class="showreel-description">
@@ -134,7 +228,7 @@
   </div>
 </div>
 
-<div class="overlay"></div>
+<!--  <div class="overlay"></div> -->
 
 <div class="modal about">
   <div class="modal-wrapper">
@@ -142,7 +236,7 @@
       <div class="about-cards">
         <article class="about-card">
           <div class="about-media">
-          <img src="images/koira.webp" alt="koira"/>
+          <img src="images/mie.webp" alt="me"/>
             </div>
         </article>
         <article class="about-card">
@@ -172,5 +266,21 @@
       <canvas id="experience-canvas" class="experience-canvas"></canvas>
     </div>
     <script type="module" src="/src/main.js"></script>
+    <script>
+  const projectDetailModals = document.querySelectorAll('.modal.project-detail');
+  const blurBackground = document.querySelector('.blurBackground');
+
+  projectDetailModals.forEach(modal => {
+    modal.addEventListener('show', () => {
+      blurBackground.style.display = 'block';
+    });
+
+    modal.addEventListener('hide', () => {
+      blurBackground.style.display = 'none';
+    });
+  });
+</script>
+
+
   </body>
 </html>

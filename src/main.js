@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { Font } from 'three/examples/jsm/Addons.js';
 
 //-----------------Audio setup--------------------
 let isMusicFaded = false;
@@ -14,7 +15,7 @@ const FADED_VOLUME = 0;
 const backgroundMusic = new Howl({
   src: ["/audio/music/lobbymusic.mp3"],
   loop: true,
-  volume: 0.5,
+  volume: 0.4,
 });
 
 const fadeOutBackgroundMusic = () => {
@@ -56,7 +57,7 @@ const sizes = {
 
 // Scene
 const scene = new THREE.Scene();
-//scene.background = new THREE.Color(0xebae34);
+//scene.background = new THREE.Color(0xebae34); // Warm light yellow
 
 // Lights
 const ambientLight = new THREE.AmbientLight(0xfffef5, 2);
@@ -154,6 +155,7 @@ let isModalOpen = false;
 
 const showModal = (modal) => {
   console.log("Opening modal:", modal);
+  overlay.classList.add("active"); // <--- ENABLE overlay
   modal.style.display = "block";
   blurBackground.style.display = "block";
   document.querySelector("#experience-canvas").style.pointerEvents = "none"; // Disable canvas interactions
@@ -183,8 +185,8 @@ const showModal = (modal) => {
 
 const hideModal = (modal) => {
   console.log("Closing modal:", modal);
+  overlay.classList.remove("active"); // <--- DISABLE overlay
   isModalOpen = false;
-  //controls.enabled = true; // Re-enable controls when the modal is closed
   controls.update(); // Ensure controls are updated
 
   gsap.to(modal, {
@@ -194,6 +196,7 @@ const hideModal = (modal) => {
     onComplete: () => {
       modal.style.display = "none";
       blurBackground.style.display = "none"; // Ensure blur background is hidden
+      blurBackgroundDetail.style.display = "none"; // Ensure blurBackgroundDetail is hidden
       document.querySelector("#experience-canvas").style.pointerEvents = "auto"; // Re-enable canvas interactions
     },
   });
@@ -223,30 +226,29 @@ const loadingScreen = document.querySelector(".loading-screen");
 const loadingScreenButton = document.querySelector(".loading-screen-button");
 const noSoundButton = document.querySelector(".no-sound-button");
 
-manager.onLoad = function () {
-  //loadingScreenButton.style.border = "5px solid #0f8f49ff";
-  loadingScreenButton.style.background = "#71c283ff";
-  loadingScreenButton.style.color = "#e6dede";
-  loadingScreenButton.style.boxShadow = "rgba(0, 0, 0, 0.24) 0px 3px 8px";
+manager.onLoad = function () { //Enter button appears when everything is loaded
+  loadingScreenButton.style.color = "#fff8f3ff";
   loadingScreenButton.textContent = "ENTER";
+  loadingScreenButton.style.fontSize = "60px";
   loadingScreenButton.style.cursor = "pointer";
   loadingScreenButton.style.transition =
-    "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)";
+    "transform 0.4s cubic-bezier(0.3, 1.56, 0.64, 1)";
   let isDisabled = false;
 
-  noSoundButton.textContent = "Enter without Sound";
+  noSoundButton.textContent = "Enter without sound";
+  noSoundButton.style.background = "transparent";
 
-  function handleEnter(withSound = true) {
+  function handleEnter(withSound = true) { //when enter button is clicked
     if (isDisabled) return;
 
     noSoundButton.textContent = "";
+    noSoundButton.style.background = "none";
     loadingScreenButton.style.cursor = "default";
     //loadingScreenButton.style.border = "5px solid #ffeac3ff";
-    loadingScreenButton.style.background = "#000000ff";
-    loadingScreenButton.style.color = "#ffd27dff";
+    loadingScreenButton.style.background = "none";
+    loadingScreenButton.style.color = "#fff8f3ff";
     loadingScreenButton.style.boxShadow = "none";
     loadingScreenButton.textContent = "WELCOME";
-    loadingScreen.style.background = "#000000ff";
     isDisabled = true;
 
     if (!withSound) {
@@ -260,11 +262,14 @@ manager.onLoad = function () {
       soundOnSvg.classList.add("active");
     }
 
+    // Call playReveal only after the Enter button is clicked
     playReveal();
+    controls.update(); // Force internal sync
+    controls.enabled = true;
   }
 
   loadingScreenButton.addEventListener("mouseenter", () => {
-    loadingScreenButton.style.transform = "scale(1.3)";
+    loadingScreenButton.style.transform = "scale(1.15)";
   });
 
   loadingScreenButton.addEventListener("touchend", (e) => {
@@ -289,20 +294,63 @@ manager.onLoad = function () {
 };
 
 function playReveal() {
+  const requiredObjects = [kirja_1, kirja_2, kirja_3, kirja_4];
+
+  // Check objects are ready
+  if (requiredObjects.some((obj) => !obj)) {
+    console.warn("Objects not ready yet, retrying playReveal...");
+    console.log("Current object states:", {
+      kirja_1,
+      kirja_2,
+      kirja_3,
+      kirja_4,
+    });
+    setTimeout(playReveal, 100);
+    return;
+  }
+
+  console.log("Starting unified reveal + intro timeline");
+
+  // Unified timeline
   const t1 = gsap.timeline({
+    defaults: { duration: 0.8, ease: "back.out(1.8)" },
+    onStart: () => console.log("Timeline started"),
     onComplete: () => {
-      console.log("Loading screen and camera arc animations complete.");
-      startSecondaryAnimations(); // Start t2 animations after t1 completes
+      console.log("Timeline complete");
+
+      // Ensure canvas is interactive
+      const canvas = document.querySelector("#experience-canvas");
+      canvas.style.pointerEvents = "auto";
+
+      // Log final camera and controls state
+      console.log("Final camera position:", camera.position);
+      console.log("Final controls target:", controls.target);
+
+      // Ensure OrbitControls internal state matches camera after animation
+      controls.target.set(0, 3, 0); // Set to the intended target
+      controls.update();
+      controls.reset(); // Fully reset internal drag state
+      controls.enabled = true; // Make sure controls are enabled
+
+      console.log("OrbitControls synced after intro animation");
+      console.log("Controls enabled:", controls.enabled);
     },
   });
 
-  // Loading screen removal
+  // ---------------------------
+  // 1. Loading screen scale down
+  // ---------------------------
   t1.to(loadingScreen, {
     scale: 0.5,
     duration: 1.2,
     delay: 0.25,
     ease: "back.in(1.8)",
-  }).to(
+  });
+
+  // ---------------------------
+  // 2. Loading screen move away
+  // ---------------------------
+  t1.to(
     loadingScreen,
     {
       y: "200vh",
@@ -310,122 +358,120 @@ function playReveal() {
       duration: 1.2,
       ease: "back.in(1.8)",
       onComplete: () => {
-        loadingScreen.remove(); // Remove the loading screen
-        isModalOpen = false;
+        loadingScreen.remove();
+        console.log("Loading screen removed");
       },
     },
-    "-=0.8" // Overlap with the camera arc animation
+    "-=0.8" // overlap with previous
   );
 
-  // Camera arc animation (overlaps with the above)
-  animateCameraArc(t1, "-=0.8"); // pass relative position
-}
-
-function animateCameraArc(t1, overlap = 0) {
+ // ---------------------------
+  // 3. Camera arc animation
+  // ---------------------------
   const target = new THREE.Vector3(0, 3, 0);
-
-  // Start above
   camera.position.set(1, 40, 1);
   controls.target.copy(target);
   controls.update();
-
   const spherical = new THREE.Spherical();
   spherical.setFromVector3(camera.position.clone().sub(target));
 
-  t1.to(spherical, {
-    duration: 3,
-    phi: Math.PI / 2.5, // from top → angled
-    ease: "power1.Out",
-    onUpdate: () => {
-      camera.position.copy(
-        new THREE.Vector3().setFromSpherical(spherical).add(target)
-      );
-      controls.target.copy(target);
-      controls.update();
+  t1.to(
+    spherical,
+    {
+      duration: 3,
+      phi: Math.PI / 2.5,
+      ease: "power1.Out",
+      onUpdate: () => {
+        camera.position.copy(new THREE.Vector3().setFromSpherical(spherical).add(target));
+        controls.target.copy(target);
+        controls.update();
       },
     },
-    overlap // <-- controls when it starts relative to the previous animation
+    "-=0.8" // start camera animation overlapping loading screen
   );
-}
 
-function startSecondaryAnimations() {
-  const t2 = gsap.timeline({
-    onComplete: () => {
-      console.log("Secondary animations complete. Enabling controls.");
-      controls.enabled = true; // Enable controls after all animations
-      controls.update(); // Ensure controls are updated
-      document.querySelector("#experience-canvas").style.pointerEvents = "auto"; // Re-enable canvas interactions
-      console.log("Controls updated and canvas pointer events re-enabled.");
+  // ---------------------------
+  // 4. Kirja objects intro animations
+  // ---------------------------
+  t1.to(
+    kirja_1.position,
+    {
+      y: kirja_1.position.y + 1,
+      duration: 0.3,
+      yoyo: true,
+      repeat: 1,
+      ease: "circ.inOut",
     },
-  });
+    "-=1.7" // overlap slightly with previous animation
+  );
 
-  // Kirja animations
-  if (kirja1) {
-    t2.to(kirja1.scale, {
-      x: 1,
-      y: 1,
-      z: 1,
-      duration: 0.8,
-      ease: "back.out(1.8)",
-    });
-  }
-  if (kirja2) {
-    t2.to(
-      kirja2.scale,
-      { x: 1, y: 1, z: 1, duration: 0.8, ease: "back.out(1.8)" },
-      "-=0.5"
-    );
-  }
-  if (kirja3) {
-    t2.to(
-      kirja3.scale,
-      { x: 1, y: 1, z: 1, duration: 0.8, ease: "back.out(1.8)" },
-      "-=0.5"
-    );
-  }
-  if (kirja4) {
-    t2.to(
-      kirja4.scale,
-      { x: 1, y: 1, z: 1, duration: 0.8, ease: "back.out(1.8)" },
-      "-=0.5"
-    );
-  }
+  t1.to(
+    kirja_2.position,
+    {
+      y: kirja_2.position.y + 1,
+      duration: 0.3,
+      yoyo: true,
+      repeat: 1,
+      ease: "circ.inOut",
+    },
+    "-=1.65"
+  );
 
-  // Add more animations to t2 here as needed
-}
+  t1.to(
+    kirja_3.position,
+    {
+      y: kirja_3.position.y + 1,
+      duration: 0.3,
+      yoyo: true,
+      repeat: 1,
+      ease: "circ.inOut",
+    },
+    "-=1.6"
+  );
 
-// Ensure controls are enabled after the intro animation
-function playIntroAnimation() {
-  const t2 = gsap.timeline({
-    defaults: {
-      duration: 0.8,
-      ease: "back.out(1.8)"
-    }
-  });
+  t1.to(
+    kirja_4.position,
+    {
+      y: kirja_4.position.y + 1.2,
+      duration: 0.4,
+      yoyo: true,
+      repeat: 1,
+      ease: "circ.inOut",
+    },
+    "-=1.55"
+  );
 
-  
+  t1.to(
+    ohjain.position,
+    {
+      y: ohjain.position.y + 2,
+      duration: 0.6,
+      yoyo: true,
+      repeat: 1,
+      ease: "circ.inOut",
+    },
+    "-=1.3"
+  );
 
-  // Ensure objects are defined before animating
-  if (kirja1) {
-    t2.to(kirja1.scale, { x: 1, y: 1, z: 1 });
-  }
-  if (kirja2) {
-    t2.to(kirja2.scale, { x: 1, y: 1, z: 1 }, "-=0.5");
-  }
-  if (kirja3) {
-    t2.to(kirja3.scale, { x: 1, y: 1, z: 1 }, "-=0.5");
-  }
-  if (kirja4) {
-    t2.to(kirja4.scale, { x: 1, y: 1, z: 1 }, "-=0.5");
-  }
+  t1.to(ohjain.rotation, {
+  x: "+=" + Math.PI * 2,   // one full 360° turn
+  z: "+=" + Math.PI * 2,   // one full 360° turn
+  duration: 0.5,
+  ease: "circ.Out",
+}, "-=1.25");
 
-  
+  // ---------------------------
+  // 5. Enable controls at the end
+  // ---------------------------
+  t1.call(() => {
+  // Ensure OrbitControls internal state matches camera after animation
+  controls.update();
+  controls.saveState();  // save new default state
+  controls.reset();      // resets internal drag state to current position
+  controls.enabled = true; // Make sure controls are enabled
+  console.log("OrbitControls synced after intro animation");
+});
 
-  // Enable controls after the intro animation
-  t2.call(() => {
-    console.log("Enabling controls after intro animation");
-    controls.update(); // Ensure controls are updated
-  });
 }
 
 //Loaders & Texture Preparations
@@ -506,58 +552,11 @@ window.addEventListener("mousemove", (e) => {
   pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
 });
 
-window.addEventListener(
-  "touchstart",
-  (e) => {
-    if (isModalOpen) return
-    e.preventDefault();
-    pointer.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
-    pointer.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
-  },
-  { passive: false }
-);
 
-window.addEventListener(
-  "touchend",
-  (e) => {
-    if (isModalOpen) return
-    e.preventDefault();
-    handleRaycasterInteraction()
-  },
-  { passive: false }
-);
 
-function handleRaycasterInteraction() {
-  if (currentIntersects.length > 0) {
-    let object = currentIntersects[0].object;
-    // If it's a hover target, use the linked real object
-    if (object.userData.linkedObject) {
-      object = object.userData.linkedObject;
-    }
-
-    if (object.name.includes("Projects")) {
-      showModal(modals.projects)
-    } else if (object.name.includes("Showreel")) {
-      showModal(modals.showreel)
-    } else if (object.name.includes("Aboutme")) {
-      showModal(modals.about)
-    }
-  }
-}
-
-//function handleRaycasterInteraction() {
-//  if (currentIntersects.length > 0) {
-//    const object = currentIntersects[0].object;
-//
-//    if (object.name.includes("Projects")) {
-//      showModal(modals.projects)
-//    } else if (object.name.includes("Showreel")) {
-//      showModal(modals.showreel)
-//    } else if (object.name.includes("Aboutme")) {
-//      showModal(modals.about)
-//    }
-//  }
-//}
+var i = 0;
+var txt = 'Lorem ipsum dummy text blabla.';
+var speed = 50;
 
 // Other Event Listeners
 const muteToggleButton = document.querySelector(".mute-toggle-button");
@@ -637,22 +636,9 @@ muteToggleButton.addEventListener(
 
 window.addEventListener("click", handleRaycasterInteraction);
 
-let tuoli;
-let kirja1,
-  kirja2,
-  kirja3,
-  kirja4;
 
 // Array to hold video textures for updating
 const videoTextures = [];
-
-const objectsWithIntroAnimations = [
-  "kirja_1",
-  "kirja_2",
-  "kirja_3",
-  "kirja_4",
-  "tuoli",
-];
 
 function hasIntroAnimation(objectName) {
  return objectsWithIntroAnimations.some((animatedName) => 
@@ -677,90 +663,137 @@ const videoTexture = new THREE.VideoTexture(videoElement);
 videoTexture.colorSpace = THREE.SRGBColorSpace;
 videoTexture.flipY = false; // Ensure the video texture is not flipped vertically
 videoTexture.wrapS = THREE.RepeatWrapping; // Allow horizontal flipping
-videoTexture.repeat.x = -1; // Flip the texture horizontally
+videoTexture.repeat.x = 1; // Flip the texture horizontally
 
-loader.load("/models/PortfolioRoomCozy_V2.glb", (glb) => {
+// Update variable declarations to allow reassignment
+let kirja_1, kirja_2, kirja_3, kirja_4;
+
+let ohjain;
+
+let tuoli;
+
+loader.load("/models/PortfolioRoomCozy_V3.glb", (glb) => {
+  // Enhanced logging to debug object names during traversal
+  console.log("Starting object traversal...");
+
   glb.scene.traverse((child) => {
-    if (child.isMesh) {
-      console.log(child.name, child.material.name, child.material.transparent, child.material.opacity, child.material.depthWrite);
-      Object.keys(textureMap).forEach((key) => {
+    if (!child.isMesh) return;
+
+    // Log the name of every object being processed
+    console.log("Found object:", child.name);
+
+    // kirja_1 ... kirja_4 (match partial names)
+    if (child.name.includes("kirja_1")) {
+      kirja_1 = child;
+      console.log("Initialized kirja_1");
+      child.userData.initialPosition = child.position.clone();
+      kirjat.push(child);
+    }
+
+    if (child.name.includes("kirja_2")) {
+      kirja_2 = child;
+      console.log("Initialized kirja_2");
+      child.userData.initialPosition = child.position.clone();
+      kirjat.push(child);
+    }
+
+    if (child.name.includes("kirja_3")) {
+      kirja_3 = child;
+      console.log("Initialized kirja_3");
+      child.userData.initialPosition = child.position.clone();
+      kirjat.push(child);
+    }
+
+    if (child.name.includes("kirja_4")) {
+      kirja_4 = child;
+      console.log("Initialized kirja_4");
+      child.userData.initialPosition = child.position.clone();
+      kirjat.push(child);
+    }
+
+    // ---------------------------
+    // 1. MATERIAL OVERRIDES
+    // ---------------------------
+    Object.keys(textureMap).forEach((key) => {
       if (child.name.includes(key)) {
         const material = new THREE.MeshStandardMaterial({
           map: LoadedTextures.day[key],
         });
+        child.material = material;
         child.material.transparent = false;
         child.material.opacity = 1;
         child.material.depthWrite = true;
-        child.material = material;
-      }
-
-    if (child.name.includes("Projects") || child.name.includes("Showreel") || child.name.includes("Aboutme")) {
-      //child.material = projectsMaterial;
-      raycasterObjects.push(child);
-      child.userData.initialScale = child.scale.clone();
-      child.userData.initialPosition = child.position.clone();
-      child.userData.initialRotation = child.rotation.clone();
-      child.userData.isAnimating = false;
-      // create an invisible hover target box only if you want it
-      const bbox = new THREE.Box3().setFromObject(child);
-      const size = new THREE.Vector3();
-      bbox.getSize(size);
-      const geometry = new THREE.BoxGeometry(size.x * 1.3, size.y * 1.3, size.z * 1.3);
-      const material = new THREE.MeshBasicMaterial({ visible: false });
-      const hoverTarget = new THREE.Mesh(geometry, material);
-      hoverTarget.position.copy(bbox.getCenter(new THREE.Vector3()));
-      hoverTarget.name = child.name + "_HoverTarget";
-      hoverTarget.userData.linkedObject = child;
-      scene.add(hoverTarget);
-      raycasterObjects.push(hoverTarget);
-    }
-
-    // --- Generic handling for fans, glass, kirja_* and tuoli ---
-    else if (child.name.includes("Glass")) {
-        child.material = glassMaterial;
-
-    } else if (child.name.includes("Screen")) {
-      child.material = new THREE.MeshBasicMaterial({
-          map: videoTexture,
-          transparent: true,
-          opacity: 0.9,
-      });
-
-    if (child.name.includes("tuuletin_1")) {
-      if (
-        child.name.includes("tuuletin_2") ||
-        child.name.includes("tuuletin_3")
-      ) {
-        xAxisFans.push(child);
-        }
-      }
-
-      if (child.material.map) {
-        child.material.map.minFilter = THREE.LinearFilter;
-        }
       }
     });
 
-    if (child.name.includes("kirja_1")) {
-      kirja1 = child;
-      child.scale.set(0, 0, 0);
-    } else if (child.name.includes("kirja_2")) {
-      kirja2 = child;
-      child.scale.set(0, 0, 0);
-    } else if (child.name.includes("kirja_3")) {
-      kirja3 = child;
-      child.scale.set(0, 0, 0);
-    } else if (child.name.includes("kirja_4")) {
-      kirja4 = child;
-      child.scale.set(0, 0, 0);
+    if (child.name.includes("Glass")) {
+      child.material = glassMaterial;
     }
 
+    if (child.name.includes("Screen")) {
+      child.material = new THREE.MeshBasicMaterial({
+        map: videoTexture,
+        transparent: true,
+        opacity: 0.9,
+      });
+      if (child.material.map) child.material.map.minFilter = THREE.LinearFilter;
+    }
+
+    // ---------------------------
+    // 2. SPECIAL OBJECTS
+    // ---------------------------
+
+    // tuoli
     if (child.name.includes("tuoli")) {
       tuoli = child;
       child.userData.initialRotation = child.rotation.clone();
     }
 
-    // If the mesh acts as a raycaster-only object:
+    if (child.name.includes("ohjain")) {
+      ohjain = child;
+      child.userData.initialRotation = child.rotation.clone();
+      child.userData.initialPosition = child.position.clone();
+    }
+
+    // kirja_1 ... kirja_4 are already handled above
+    // fans on X-axis
+    if (child.name.includes("tuuletin_1") ||
+        child.name.includes("tuuletin_2") ||
+        child.name.includes("tuuletin_3")) {
+      xAxisFans.push(child);
+    }
+
+    // ---------------------------
+    // 3. RAYCASTER INTERACTIVES
+    // ---------------------------
+    if (child.name.includes("Projects") ||
+        child.name.includes("Showreel") ||
+        child.name.includes("Aboutme")) {
+
+      raycasterObjects.push(child);
+
+      child.userData.initialScale = child.scale.clone();
+      child.userData.initialPosition = child.position.clone();
+      child.userData.initialRotation = child.rotation.clone();
+      child.userData.isAnimating = false;
+
+      // create hover target box
+      const bbox = new THREE.Box3().setFromObject(child);
+      const size = new THREE.Vector3();
+      bbox.getSize(size);
+
+      const geometry = new THREE.BoxGeometry(size.x * 1.3, size.y * 1.3, size.z * 1.3);
+      const material = new THREE.MeshBasicMaterial({ visible: false });
+
+      const hoverTarget = new THREE.Mesh(geometry, material);
+      hoverTarget.position.copy(bbox.getCenter(new THREE.Vector3()));
+      hoverTarget.name = child.name + "_HoverTarget";
+      hoverTarget.userData.linkedObject = child;
+
+      scene.add(hoverTarget);
+      raycasterObjects.push(hoverTarget);
+    }
+
     if (child.name.includes("Raycaster")) {
       raycasterObjects.push(child);
     }
@@ -771,41 +804,16 @@ loader.load("/models/PortfolioRoomCozy_V2.glb", (glb) => {
       child.userData.initialRotation = child.rotation.clone();
       child.userData.isAnimating = false;
     }
-  }
-});
+  });
 
+  console.log("Object traversal complete. Calling playReveal...");
+  // Add final model to scene
   scene.add(glb.scene);
 
-  // Call playIntroAnimation only after models are loaded
-  playIntroAnimation();
+  // Call playReveal only after models are loaded
+  console.log("All objects processed. Calling playReveal...");
 });
 
-// Create a plane with a 16:9 aspect ratio for the video texture
-//const videoPlaneGeometry = new THREE.PlaneGeometry(16, 9);
-
-// Adjust the UV mapping to flip the texture horizontally
-//const uvAttribute = videoPlaneGeometry.attributes.uv;
-//for (let i = 0; i < uvAttribute.count; i++) {
-//  const u = uvAttribute.getX(i);
-//  uvAttribute.setX(i, 1 - u); // Flip the U coordinate
-//}
-//uvAttribute.needsUpdate = true;
-//
-//const videoPlaneMaterial = new THREE.MeshBasicMaterial({
-//  map: videoTexture,
-//  transparent: true,
-//  opacity: 0.9,
-//});
-//const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
-//
-//// Scale the plane to fit your scene as needed
-//videoPlane.scale.set(1, 1, 1); // Adjust scale if necessary
-//scene.add(videoPlane);
-//
-//// Position the plane in the scene
-//videoPlane.position.set(5, 10, -10); // Adjust position as needed
-
-// TEXT HOVER ANIMATION
 
 function playHoverAnimation(object, isHovering) {
   if (!object.userData.initialScale || !object.userData.initialRotation) return; // Prevent errors
@@ -816,36 +824,22 @@ function playHoverAnimation(object, isHovering) {
 
   if (isHovering) {
     gsap.to(object.scale, {
-      x: object.userData.initialScale.x * 1.2,
-      y: object.userData.initialScale.y * 1.2,
-      z: object.userData.initialScale.z * 1.2,
-      duration: 0.5,
-      ease: "bounce.out(1.8)",
+      x: object.userData.initialScale.x * 1.4,
+      y: object.userData.initialScale.y * 1.4,
+      z: object.userData.initialScale.z * 1.4,
+      duration: 0.3,
+     ease: "circ.out",
     });
-    gsap.to(object.rotation, {
-      x: object.userData.initialRotation.x + Math.PI / 8,
-      duration: 0.5,
-      ease: "bounce.out(1.8)",
-      onComplete: () => {
-        object.userData.isAnimating = false;
-      },
-    });
+    
   } else {
     gsap.to(object.scale, {
       x: object.userData.initialScale.x,
       y: object.userData.initialScale.y,
       z: object.userData.initialScale.z,
-      duration: 0.3,
-      ease: "bounce.out(1.8)",
+      duration: 0.5,
+      ease: "elastic.out(1, 0.5)",
     });
-    gsap.to(object.rotation, {
-      x: object.userData.initialRotation.x,
-      duration: 0.3,
-      ease: "bounce.out(1.8)",
-      onComplete: () => {
-        object.userData.isAnimating = false;
-      },
-    });
+    
   }
 }
 
@@ -915,42 +909,181 @@ const render = (timestamp) => {
   window.requestAnimationFrame(render);
 };
 
+window.addEventListener(
+  "touchstart",
+  (e) => {
+    if (isModalOpen) return
+    e.preventDefault();
+    pointer.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+    pointer.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
+  },
+  { passive: false }
+);
+
+window.addEventListener(
+  "touchend",
+  (e) => {
+    if (isModalOpen) return
+    e.preventDefault();
+    handleRaycasterInteraction()
+  },
+  { passive: false }
+);
+
+function handleRaycasterInteraction() {
+  if (currentIntersects.length > 0) {
+    let object = currentIntersects[0].object;
+    // If it's a hover target, use the linked real object
+    if (object.userData.linkedObject) {
+      object = object.userData.linkedObject;
+    }
+
+    if (object.name.includes("Projects")) {
+      showModal(modals.projects)
+    } else if (object.name.includes("Showreel")) {
+      showModal(modals.showreel)
+    } else if (object.name.includes("Screen")) {
+      showModal(modals.showreel)
+    } else if (object.name.includes("Aboutme")) {
+      showModal(modals.about)
+    }
+  }
+}
+
 // --- Project detail modal logic (moved up here) ---
-const projectDetailModal = modals.projectDetail;
+//const projectDetailModal = modals.projectDetail;
+const projectDetailModal = document.querySelector('.modal.project-detail');
 const projectDetailImage = projectDetailModal.querySelector('.project-detail-image');
 const projectDetailDescription = projectDetailModal.querySelector('.project-detail-description');
 const projectDetailExit = projectDetailModal.querySelector('.project-detail-exit');
 const blurBackground = document.querySelector(".blurBackground");
+const blurBackgroundDetail = document.querySelector('.blurBackgroundDetail');
+const projectImages = document.querySelectorAll('.project-media img');
 
+// =======================
+// PROJECT DETAIL LOGIC
+// =======================
+
+// Open correct detail modal
 document.querySelectorAll('.project-card').forEach(card => {
   card.addEventListener('click', () => {
-    // Get image and title/description from the card
-    
-    const img = card.querySelector('img');
-    const title = card.querySelector('h3') ? card.querySelector('h3').textContent : '';
-    // Set content in detail modal
-    projectDetailImage.src = img.src;
-    projectDetailImage.alt = img.alt;
-    projectDetailDescription.textContent = title;
-    // Show the detail modal
-    showModal(projectDetailModal);
-    blurBackground.style.display = "block";
+    const modalId = card.dataset.modal;
+    const modal = document.getElementById(modalId);
+    if (modal) showModal(modal);
   });
 });
 
-// Close detail modal
-projectDetailExit.addEventListener('click', (e) => {
-  e.preventDefault();
-  hideModal(projectDetailModal);
-  blurBackground.style.display = "none"; // Ensure blur background is hidden
+// Close detail modals
+document.querySelectorAll('.project-detail .modal-exit-button').forEach(button => {
+  button.addEventListener('click', (e) => {
+    const modal = e.target.closest('.modal');
+    hideModal(modal);
+    blurBackground.style.display = "none";
+  });
 });
 
-projectDetailExit.addEventListener('touchend', (e) => {
-  e.preventDefault();
-  hideModal(projectDetailModal);
-  blurBackground.style.display = "none"; // Ensure blur background is hidden
+// Directly toggle blurBackgroundDetail when opening detail modal
+document.querySelectorAll('.project-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const modalId = card.dataset.modal;
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      showModal(modal);
+      blurBackgroundDetail.style.display = 'block'; // Ensure blurBackgroundDetail is visible
+      console.log('Manually set blurBackgroundDetail to block');
+    }
+  });
 });
+
+// =======================
+// SLIDESHOW LOGIC
+// =======================
+
+function initSlideshow(slideClass, index = 1) {
+  let currentIndex = index;
+
+  function showSlides(n) {
+    const slides = document.querySelectorAll(`.${slideClass}`);
+    if (slides.length === 0) return;
+
+    if (n > slides.length) currentIndex = 1;
+    if (n < 1) currentIndex = slides.length;
+
+    slides.forEach(s => (s.style.display = "none"));
+    slides[currentIndex - 1].style.display = "block";
+  }
+
+  // Initial display
+  showSlides(currentIndex);
+
+  // Controls
+  document.querySelectorAll(`[data-slideshow="${slideClass.slice(-1)}"].next`)
+    .forEach(btn => btn.addEventListener('click', () => showSlides(++currentIndex)));
+
+  document.querySelectorAll(`[data-slideshow="${slideClass.slice(-1)}"].prev`)
+    .forEach(btn => btn.addEventListener('click', () => showSlides(--currentIndex)));
+}
+
+// Initialize slideshows
+initSlideshow("mySlides1");
+initSlideshow("mySlides2");
+initSlideshow("mySlides3");
 
 // Ensure render() is properly called only once
 render(); 
 console.log("Controls enabled?", controls.enabled);
+
+// Add event listeners for modals
+const projectDetailModals = document.querySelectorAll('.modal.project-detail');
+
+projectDetailModals.forEach(modal => {
+  modal.addEventListener('show', () => {
+    blurBackground.style.display = 'block';
+  });
+
+  modal.addEventListener('hide', () => {
+    // Only hide blurBackground if no other modals are open
+    const anyModalOpen = [...projectModals, ...projectDetailModals].some(m => m.style.display === 'block');
+    if (!anyModalOpen) {
+      blurBackground.style.display = 'none';
+    }
+  });
+});
+
+// Debugging for blurBackgroundDetail
+projectDetailModals.forEach(modal => {
+  modal.addEventListener('show', () => {
+    console.log('Detail modal shown:', modal);
+    blurBackgroundDetail.style.display = 'block';
+    console.log('blurBackgroundDetail set to block');
+  });
+
+  modal.addEventListener('hide', () => {
+    console.log('Detail modal hidden:', modal);
+    blurBackgroundDetail.style.display = 'none';
+    console.log('blurBackgroundDetail set to none');
+  });
+});
+
+// Declare kirjat as an empty array to store kirja objects
+let kirjat = [];
+
+// Add a typewriter effect to the text inside the loading-screen-button
+const loadingButton = document.querySelector(".loading-screen-button");
+const loadingText = "Loading...";
+let charIndex = 0;
+
+// Clear the button text initially
+loadingButton.textContent = "";
+
+// Function to animate typing
+function typeWriterEffect() {
+  if (charIndex < loadingText.length) {
+    loadingButton.textContent += loadingText[charIndex];
+    charIndex++;
+    setTimeout(typeWriterEffect, 30); // Adjust typing speed (100ms per character)
+  }
+}
+
+// Start the typewriter animation
+typeWriterEffect();
