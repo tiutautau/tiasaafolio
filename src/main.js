@@ -13,9 +13,9 @@ const BACKGROUND_MUSIC_VOLUME = 1;
 const FADED_VOLUME = 0;
 
 const backgroundMusic = new Howl({
-  src: ["/audio/music/lobbymusic.mp3"],
+  src: ["/audio/music/lofi2.mp3"],
   loop: true,
-  volume: 0.4,
+  volume: 0.35,
 });
 
 const fadeOutBackgroundMusic = () => {
@@ -44,7 +44,7 @@ const buttonSounds = {
   click: new Howl({
     src: ["/audio/sfx/twinkle.mp3"],
     preload: true,
-    volume: 0.5,
+    volume: 0.4,
   }),
 };
 
@@ -564,16 +564,32 @@ const soundOffSvg = document.querySelector(".sound-off-svg");
 const soundOnSvg = document.querySelector(".sound-on-svg");
 
 // Set initial icon state: sound ON by default
-soundOnSvg.classList.add("active");
-soundOffSvg.classList.remove("active");
+/* soundOnSvg.classList.add("active");
+soundOffSvg.classList.remove("active"); */
 
 const updateMuteState = (muted) => {
   if (muted) {
     backgroundMusic.volume(0);
+    soundOffSvg.style.display = "none";
+        soundOnSvg.style.display = "block";
   } else {
     backgroundMusic.volume(BACKGROUND_MUSIC_VOLUME);
+    soundOnSvg.style.display = "none";
+        soundOffSvg.style.display = "block";
   }
 };
+
+/* const updateMuteState = (muted) => {
+  if (muted) {
+    backgroundMusic.volume(0);
+    soundOffSvg.classList.add("active");
+    soundOnSvg.classList.remove("active");
+  } else {
+    backgroundMusic.volume(BACKGROUND_MUSIC_VOLUME);
+    soundOnSvg.classList.add("active");
+    soundOffSvg.classList.remove("active");
+  }
+}; */
 
 const handleMuteToggle = (e) => {
   e.preventDefault();
@@ -587,28 +603,18 @@ const handleMuteToggle = (e) => {
   }
 
   gsap.to(muteToggleButton, {
-    rotate: -45,
-    scale: 5,
+    rotate: -20,
+    scale: 1.4,
     duration: 0.5,
     ease: "back.out(2)",
-    onStart: () => {
-      if (!isMuted) {
-        soundOffSvg.classList.remove("active");
-        soundOnSvg.classList.add("active");
-      } else {
-        soundOnSvg.classList.remove("active");
-        soundOffSvg.classList.add("active");
-      }
-
+    onComplete: () => {
       gsap.to(muteToggleButton, {
         rotate: 0,
         scale: 1,
         duration: 0.5,
         ease: "back.out(2)",
         onComplete: () => {
-          gsap.set(muteToggleButton, {
-            clearProps: "all",
-          });
+          gsap.set(muteToggleButton, { clearProps: "all" });
         },
       });
     },
@@ -1017,17 +1023,23 @@ function initSlideshow(slideClass, index = 1) {
   showSlides(currentIndex);
 
   // Controls
-  document.querySelectorAll(`[data-slideshow="${slideClass.slice(-1)}"].next`)
-    .forEach(btn => btn.addEventListener('click', () => showSlides(++currentIndex)));
-
-  document.querySelectorAll(`[data-slideshow="${slideClass.slice(-1)}"].prev`)
-    .forEach(btn => btn.addEventListener('click', () => showSlides(--currentIndex)));
+  document.querySelectorAll(`[data-slideshow="${slideClass.match(/\d+/)[0]}"]`).forEach(btn => {
+    if (btn.classList.contains('next')) {
+      btn.addEventListener('click', () => showSlides(++currentIndex));
+    } else if (btn.classList.contains('prev')) {
+      btn.addEventListener('click', () => showSlides(--currentIndex));
+    }
+  });
 }
 
 // Initialize slideshows
 initSlideshow("mySlides1");
 initSlideshow("mySlides2");
 initSlideshow("mySlides3");
+initSlideshow("mySlides4");
+initSlideshow("mySlides5");
+initSlideshow("mySlides6");
+initSlideshow("mySlides7");
 
 // Ensure render() is properly called only once
 render(); 
@@ -1068,22 +1080,22 @@ projectDetailModals.forEach(modal => {
 // Declare kirjat as an empty array to store kirja objects
 let kirjat = [];
 
-// Add a typewriter effect to the text inside the loading-screen-button
-const loadingButton = document.querySelector(".loading-screen-button");
-const loadingText = "Loading...";
-let charIndex = 0;
-
-// Clear the button text initially
-loadingButton.textContent = "";
-
-// Function to animate typing
-function typeWriterEffect() {
-  if (charIndex < loadingText.length) {
-    loadingButton.textContent += loadingText[charIndex];
-    charIndex++;
-    setTimeout(typeWriterEffect, 30); // Adjust typing speed (100ms per character)
-  }
-}
-
-// Start the typewriter animation
-typeWriterEffect();
+//// Add a typewriter effect to the text inside the loading-screen-button
+//const loadingButton = document.querySelector(".loading-screen-button");
+//const loadingText = "Loading...";
+//let charIndex = 0;
+//
+//// Clear the button text initially
+//loadingButton.textContent = "";
+//
+//// Function to animate typing
+//function typeWriterEffect() {
+//  if (charIndex < loadingText.length) {
+//    loadingButton.textContent += loadingText[charIndex];
+//    charIndex++;
+//    setTimeout(typeWriterEffect, 30); // Adjust typing speed (100ms per character)
+//  }
+//}
+//
+//// Start the typewriter animation
+//typeWriterEffect();

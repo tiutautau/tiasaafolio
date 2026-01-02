@@ -335,6 +335,40 @@ ul {
   }
 }
 
+.mail-button {
+  @include vars.centered;
+  position: fixed;
+  background-color: rgb(0, 0, 0);
+  padding: 12px;
+  top: 36px;
+  border: #000000;
+  right: 160px;
+  font-size: 30px;
+  color: rgba(255, 255, 255); //kuviovari
+  z-index: 1002; // Ensure buttons are above modals
+  border-radius: 1rem;
+  box-shadow: rgba(241, 174, 30, 0.6) 0px 0px 20px;
+  cursor: pointer;
+
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  &:hover {
+    transform: scale(1.3);
+  }
+
+  @include media.media("<=tablet") {
+    top: 30px;
+    right: 96px;
+  }
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 300,
+  'GRAD' 0,
+  'opsz' 24
+}
+
 // No Sound Button
 .no-sound-button {
   font-family: "Helvetica", sans-serif;
@@ -724,7 +758,6 @@ ul {
 /* 🖼 Slideshow side */
 .project-detail .slideshow {
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -737,7 +770,7 @@ ul {
   max-width: 100%;
   max-height: 55vh;
   object-fit: contain;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
 /* ✍️ Text side */
@@ -746,57 +779,52 @@ ul {
   flex-direction: column;
   gap: 1rem;
   color: #2b1b11;
-  max-height: 60vh;
-  overflow-y: auto;
+  //max-height: 60vh;
 }
 
-.project-text-short,
-.project-text-long {
-  background: #fff8f3;
-  border: 1px solid #e5d2c2;
-  border-radius: 10px;
-  padding: 1.2rem 1.4rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+.project-text-kappale {
+  //background: #fdf3e9;
+  border-radius: 12px;
+  font-weight: 400;
+  line-height: 1.1;
+  padding: 0px 30px 0px 0px;
+  //box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.project-text-short {
-  background: #fff2e4;
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.project-text-long {
-  font-size: 0.95rem;
-  border-left: 3px solid #c5a27b;
+.project-text-apps {
+  padding-top: 16px;
+  display: grid;
+  justify-content: normal;
+  grid-template-columns: auto auto auto;
+  font-weight: 600;
 }
 
 /* Navigation arrows */
 .project-detail .prev,
 .project-detail .next {
-  position: absolute; // Position them relative to the slideshow container
+ // position: absolute; // Position them relative to the slideshow container
   top: 50%; // Center vertically within the slideshow
   transform: translateY(-50%); // Adjust for perfect centering
   z-index: 2; // Ensure they appear above the slideshow photos
-  color: #fff; // Arrow color
+  color: #000000; // Arrow color
   font-size: 24px; // Adjust size as needed
-  background-color: rgba(0, 0, 0, 0.5); // Semi-transparent background
   padding: 8px 12px; // Add some padding for better clickability
   border-radius: 4px; // Rounded corners
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: color 0.1s ease;
 }
 
 .project-detail .prev {
-  left: 10px; // Position on the left side of the image
+  transform: translatex(0px);
 }
 
 .project-detail .next {
-  right: 10px; // Position on the right side of the image
+ transform: translatex(0px);
 }
 
 .project-detail .prev:hover,
 .project-detail .next:hover {
-  background-color: rgba(0, 0, 0, 0.8); // Darker background on hover
+  color: #cc9b6a; // Change arrow color on hover
 }
 
 .project-cards{
@@ -907,25 +935,22 @@ transform: scale(1.04);
 }
 
 .sound-svg {
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
 
   @include media.media("<=tablet") {
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
   }
 }
 
 .sound-off-svg {
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
+
   @include media.media("<=tablet") {
-    top: 30px;
-    right: 96px;
-  }
-  @include media.media("<=tablet") {
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
   }
 }
 
