@@ -39,19 +39,23 @@
     
 
     <button class="mute-toggle-button toggle-buttons" aria-label="Toggle sound">
-      <svg class="sound-on-svg sound-svg active" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+      <svg class="sound-on-svg sound-svg material-symbols-outlined" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
         <path d="M3 9v6h4l5 5V4L7 9H3z" stroke="currentColor" stroke-width="2"/>
       </svg>
+      
       <svg class="sound-off-svg sound-svg material-symbols-outlined" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
         <path d="M16.5 12c0-1.77-.77-3.29-2-4.29M19 12c0-2.5-1-4.71-2.5-6.29M3 9v6h4l5 5V4L7 9H3z" stroke="currentColor" stroke-width="2"/>
         <line x1="21" y1="3" x2="3" y2="21" stroke="currentColor" stroke-width="2"/>
       </svg>
     </button>
-    <div>
+    
+    <!-- <div>
       <span class="material-symbols-outlined mail-button">mail</span>
-    </div>
+    </div> -->
 
-  <div class="loading-screen">
+<div class="loading-screen">
+  <div class="background"></div>
+  <div class="grain"></div>
     <div class="buttons-wrapper">
       <button class="loading-screen-button">
         Loading...
@@ -61,21 +65,20 @@
       <p class="desktop-instructions instructions">use left/right click and mouse wheel to navigate.</p>
       <p class="mobile-instructions instructions">use one or two fingers to navigate.</p>
     </div>
-<div class="loading-wrapper">
-      <div class="shapes1">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-      <div class="shapes2">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-      <div class="gradient">
-      </div>
-    </div>
-  </div>
+    <svg class="grain-filter" width="0" height="0">
+    <filter id="grainy">
+      <feTurbulence
+        type="fractalNoise"
+        baseFrequency="0.45"
+        numOctaves="4"
+        stitchTiles="stitch"
+        result="noise"
+      />
+      <feColorMatrix type="saturate" values="0" />
+      <feBlend in="SourceGraphic" in2="noise" mode="multiply" />
+    </filter>
+  </svg>
+</div>
     
 <div class="overlay"></div>
 
@@ -452,7 +455,7 @@
       <div class="about-cards">
         <article class="about-card">
           <div class="about-media">
-          <img src="images/mie.webp" alt="me"/>
+          <img src="images/tiu.webp" alt="me"/>
             </div>
         </article>
         <article class="about-card">
@@ -464,12 +467,18 @@
               Motion Graphics student at Metropolia University of Applied Sciences.
             </p>
             <p class="about-text1-p">
-              Location Espoo, Finland.
+              Location: Espoo, Finland.
+            </p>
+            <p class="about-text1-p">
+              Mail: tiasaa@metropolia.fi
             </p>
           </div>
           <div class="about-text2"> 
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+              I'm a visual communication design student specializing in motion graphics with a strong interest in 3D and VFX. I see myself as a generalist: I enjoy working across different areas of design and picking up new skills along the way.
+            </p>
+            <p>
+              When I'm not creating, you can find me training street dance, hiking in the forest with my dog or playing video games.
             </p>
           </div>
       </div>

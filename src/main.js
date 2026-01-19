@@ -8,14 +8,14 @@ import { Font } from 'three/examples/jsm/Addons.js';
 
 //-----------------Audio setup--------------------
 let isMusicFaded = false;
-const MUSIC_FADE_TIME = 500;
-const BACKGROUND_MUSIC_VOLUME = 1;
+const MUSIC_FADE_TIME = 600;
+const BACKGROUND_MUSIC_VOLUME = 0.25;
 const FADED_VOLUME = 0;
 
 const backgroundMusic = new Howl({
   src: ["/audio/music/lofi2.mp3"],
   loop: true,
-  volume: 0.35,
+  volume: 0.25,
 });
 
 const fadeOutBackgroundMusic = () => {
@@ -44,7 +44,7 @@ const buttonSounds = {
   click: new Howl({
     src: ["/audio/sfx/twinkle.mp3"],
     preload: true,
-    volume: 0.4,
+    volume: 0.30,
   }),
 };
 
@@ -227,15 +227,16 @@ const loadingScreenButton = document.querySelector(".loading-screen-button");
 const noSoundButton = document.querySelector(".no-sound-button");
 
 manager.onLoad = function () { //Enter button appears when everything is loaded
-  loadingScreenButton.style.color = "#fff8f3ff";
+  loadingScreenButton.style.color = "#8f4624";
   loadingScreenButton.textContent = "ENTER";
-  loadingScreenButton.style.fontSize = "60px";
+  loadingScreenButton.style.fontWeight = "500";
+  loadingScreenButton.style.fontSize = "110px";
   loadingScreenButton.style.cursor = "pointer";
   loadingScreenButton.style.transition =
     "transform 0.4s cubic-bezier(0.3, 1.56, 0.64, 1)";
   let isDisabled = false;
 
-  noSoundButton.textContent = "Enter without sound";
+  noSoundButton.textContent = "or enter without sound";
   noSoundButton.style.background = "transparent";
 
   function handleEnter(withSound = true) { //when enter button is clicked
@@ -246,7 +247,8 @@ manager.onLoad = function () { //Enter button appears when everything is loaded
     loadingScreenButton.style.cursor = "default";
     //loadingScreenButton.style.border = "5px solid #ffeac3ff";
     loadingScreenButton.style.background = "none";
-    loadingScreenButton.style.color = "#fff8f3ff";
+    loadingScreenButton.style.fontSize = "80px";
+    loadingScreenButton.style.color = "#F2EBDD";
     loadingScreenButton.style.boxShadow = "none";
     loadingScreenButton.textContent = "WELCOME";
     isDisabled = true;
@@ -254,12 +256,13 @@ manager.onLoad = function () { //Enter button appears when everything is loaded
     if (!withSound) {
       isMuted = true;
       updateMuteState(true);
-      soundOnSvg.classList.remove("active");
-      soundOffSvg.classList.add("active");
+
+      soundOnSvg.style.display = "none";
+      soundOffSvg.style.display = "block";
     } else {
       backgroundMusic.play();
-      soundOffSvg.classList.remove("active");
-      soundOnSvg.classList.add("active");
+      soundOnSvg.style.display = "block";
+      soundOffSvg.style.display = "none";
     }
 
     // Call playReveal only after the Enter button is clicked
@@ -563,33 +566,13 @@ const muteToggleButton = document.querySelector(".mute-toggle-button");
 const soundOffSvg = document.querySelector(".sound-off-svg");
 const soundOnSvg = document.querySelector(".sound-on-svg");
 
-// Set initial icon state: sound ON by default
-/* soundOnSvg.classList.add("active");
-soundOffSvg.classList.remove("active"); */
-
 const updateMuteState = (muted) => {
   if (muted) {
     backgroundMusic.volume(0);
-    soundOffSvg.style.display = "none";
-        soundOnSvg.style.display = "block";
   } else {
     backgroundMusic.volume(BACKGROUND_MUSIC_VOLUME);
-    soundOnSvg.style.display = "none";
-        soundOffSvg.style.display = "block";
   }
 };
-
-/* const updateMuteState = (muted) => {
-  if (muted) {
-    backgroundMusic.volume(0);
-    soundOffSvg.classList.add("active");
-    soundOnSvg.classList.remove("active");
-  } else {
-    backgroundMusic.volume(BACKGROUND_MUSIC_VOLUME);
-    soundOnSvg.classList.add("active");
-    soundOffSvg.classList.remove("active");
-  }
-}; */
 
 const handleMuteToggle = (e) => {
   e.preventDefault();
@@ -607,14 +590,24 @@ const handleMuteToggle = (e) => {
     scale: 1.4,
     duration: 0.5,
     ease: "back.out(2)",
-    onComplete: () => {
+    onStart: () => {
+      if (!isMuted) {
+        soundOffSvg.style.display = "none";
+        soundOnSvg.style.display = "block";
+      } else {
+        soundOnSvg.style.display = "none";
+        soundOffSvg.style.display = "block";
+      }
+
       gsap.to(muteToggleButton, {
         rotate: 0,
         scale: 1,
         duration: 0.5,
         ease: "back.out(2)",
         onComplete: () => {
-          gsap.set(muteToggleButton, { clearProps: "all" });
+          gsap.set(muteToggleButton, {
+           clearProps: "all",
+          });
         },
       });
     },
