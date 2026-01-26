@@ -62,8 +62,8 @@
       </button>
       <button class="no-sound-button">
       </button>
-      <p class="desktop-instructions instructions">use left/right click and mouse wheel to navigate.</p>
-      <p class="mobile-instructions instructions">use one or two fingers to navigate.</p>
+      <p class="desktop-instructions instructions">Use left/right click and mouse wheel to navigate.</p>
+      <p class="mobile-instructions instructions">Use one or two fingers to navigate.</p>
     </div>
     <svg class="grain-filter" width="0" height="0">
     <filter id="grainy">
@@ -94,49 +94,49 @@
         <div class="project-media">
           <img src="images/Leipuri.webp" alt="Taydenna tarinaa game">
         </div>
-        <h3>Täydennä tarinaa</h3>
+        <h3>Game illustration for Kehitysvammaliitto</h3>
       </article>
 
       <article class="project-card" data-modal="project2-modal">
         <div class="project-media">
           <img src="images/tontut.webp" alt="Tonttu character">
         </div>
-        <h3>Tonttu</h3>
+        <h3>Character design</h3>
       </article>
 
       <article class="project-card" data-modal="project3-modal">
         <div class="project-media">
-          <img src="images/folioroom.webp" alt="Portfolio room">
+          <img src="images/room_V2.webp" alt="Portfolio room">
         </div>
-        <h3>Portfolio room</h3>
+        <h3>3D Modeling "Portfolio room"</h3>
       </article>
 
       <article class="project-card" data-modal="project4-modal">
         <div class="project-media">
           <img src="images/Plant.webp" alt="Plant simulation">
         </div>
-        <h3>Plant growth simulation</h3>
+        <h3>Plant growth animation with Blender nodes</h3>
       </article>
 
       <article class="project-card" data-modal="project5-modal">
         <div class="project-media">
           <img src="images/minnaetusivu.webp" alt="Lakipalvelu website">
         </div>
-        <h3>Lakipalvelu Minna Ikonen</h3>
+        <h3>Website illustration for Lakipalvelu Minna Ikonen</h3>
       </article>
       
       <article class="project-card" data-modal="project6-modal">
         <div class="project-media">
           <img src="images/jungleframe1.webp" alt="Portfolio room">
         </div>
-        <h3>Jungle title animation</h3>
+        <h3>Title animation</h3>
       </article>
 
       <article class="project-card" data-modal="project7-modal">
         <div class="project-media">
           <img src="images/finlays.webp" alt="Pattern design school project">
         </div>
-        <h3>Pattern design school project</h3>
+        <h3>Pattern design and animation for a digital screen (DOOH)</h3>
       </article>
     </div> 
 
@@ -201,8 +201,14 @@
       <a class="prev" data-slideshow="2">&#10094;</a>
       <div class="mySlides2"><img src="images/tontut.webp" alt=""></div>
       <div class="mySlides2"><img src="images/tonttuesittely.webp" alt=""></div>
+      <div class="mySlides2"><img src="images/TonttuPitch.webp" alt=""></div>
       <div class="mySlides2"><video width="640" height="380" controls>
         <source src="textures/video/Tonttu_turntable.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="mySlides2"><video width="640" height="380" controls>
+        <source src="textures/video/TonttuDemoV2.mp4" type="video/mp4">
         Your browser does not support the video tag.
         </video>
       </div>  
@@ -212,7 +218,7 @@
     <div class="project-info">
     <div class="project-text-kappale">
       <p>
-        Tonttu was originally designed for a school assignment which was to come up with a game concept and draw a presentation for that game. Then in 3D class I modelled that character put it in Unreal Engine and made a little game demo of him.
+        Tonttu was originally designed for a school assignment which was to come up with a game concept and draw a presentation for that game. (Last picture) In 3D modeling class I made a character based on that concept. Then I made a little game demo for the character in Unreal Engine. (Last video)
       </p>
     </div>
      <div class="project-text-apps">
@@ -236,7 +242,12 @@
     <div class="project-content">
     <div class="slideshow">
       <a class="prev" data-slideshow="3">&#10094;</a>
-      <div class="mySlides3"><img src="images/folioroom.webp" alt="isometric room"></div>
+      <div class="mySlides3"><img src="images/room_V2.webp" alt="isometric room"></div>
+      <div class="mySlides3"><video width="640" height="380" controls>
+        <source src="textures/video/V2_Spin.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+        </video>
+      </div>
       <a class="next" data-slideshow="3">&#10095;</a>
     </div>
     <div class="project-info">
@@ -436,11 +447,11 @@
     <h2 class="modal-title">Showreel</h2>
         <article class="project-card">
           <div class="project-media">
-          <iframe width="960" height="540" src="https://www.youtube.com/embed/jgB2KZguwS0">
+          <iframe width="960" height="540" src="https://www.youtube.com/embed/KyUySgwT7L8">
           </iframe>
             </div>
           <div class="showreel-description">
-              <p>My motion graphics/generalist showreel of 2025.</p>
+              <p>My motion graphics/generalist showreel of 2026.</p>
           </div>
         </article>
     <button class="modal-exit-button"><img src="media/icons/exit.png" alt="Exit" /></button>
@@ -490,6 +501,22 @@
     <div id="experience">
       <canvas id="experience-canvas" class="experience-canvas"></canvas>
     </div>
+    <!-- Hamburger button -->
+<button class="hamburger" aria-label="Open menu">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<!-- Mobile menu -->
+<nav class="mobile-menu">
+  <ul>
+    <li data-target="projects">Projects</li>
+    <li data-target="showreel">Showreel</li>
+    <li data-target="about">About</li>
+  </ul>
+</nav>
+
     <script type="module" src="/src/main.js"></script>
     <script>
   const projectDetailModals = document.querySelectorAll('.modal.project-detail');
