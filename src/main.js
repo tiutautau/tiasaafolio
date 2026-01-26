@@ -44,7 +44,7 @@ const buttonSounds = {
   click: new Howl({
     src: ["/audio/sfx/twinkle.mp3"],
     preload: true,
-    volume: 0.30,
+    volume: 0.15,
   }),
 };
 
@@ -227,10 +227,8 @@ const loadingScreenButton = document.querySelector(".loading-screen-button");
 const noSoundButton = document.querySelector(".no-sound-button");
 
 manager.onLoad = function () { //Enter button appears when everything is loaded
-  loadingScreenButton.style.color = "#8f4624";
   loadingScreenButton.textContent = "ENTER";
-  loadingScreenButton.style.fontWeight = "500";
-  loadingScreenButton.style.fontSize = "110px";
+  loadingScreenButton.classList.add("enter");
   loadingScreenButton.style.cursor = "pointer";
   loadingScreenButton.style.transition =
     "transform 0.4s cubic-bezier(0.3, 1.56, 0.64, 1)";
@@ -247,10 +245,10 @@ manager.onLoad = function () { //Enter button appears when everything is loaded
     loadingScreenButton.style.cursor = "default";
     //loadingScreenButton.style.border = "5px solid #ffeac3ff";
     loadingScreenButton.style.background = "none";
-    loadingScreenButton.style.fontSize = "80px";
-    loadingScreenButton.style.color = "#F2EBDD";
     loadingScreenButton.style.boxShadow = "none";
     loadingScreenButton.textContent = "WELCOME";
+    loadingScreenButton.classList.remove("enter");
+    loadingScreenButton.classList.add("welcome");
     isDisabled = true;
 
     if (!withSound) {
@@ -1054,6 +1052,78 @@ projectDetailModals.forEach(modal => {
     }
   });
 });
+
+// =======================
+// MOBILE MENU
+// =======================
+
+// MOBILE MENU LOGIC
+const hamburger = document.querySelector(".hamburger");
+const mobileMenu = document.querySelector(".mobile-menu");
+const mobileLinks = mobileMenu.querySelectorAll("li");
+let isMenuOpen = false;
+
+// Open menu
+function openMenu() {
+  isMenuOpen = true;
+  hamburger.classList.add("active");
+  document.querySelector("#experience-canvas").style.pointerEvents = "none";
+  controls.enabled = false;
+
+  gsap.to(mobileMenu, {
+    scaleY: 1,
+    opacity: 1,
+    duration: 0.4,
+    ease: "power2.out",
+    transformOrigin: "top",
+  });
+}
+
+// Close menu
+function closeMenu() {
+  isMenuOpen = false;
+  hamburger.classList.remove("active");
+  document.querySelector("#experience-canvas").style.pointerEvents = "auto";
+  controls.enabled = true;
+
+  gsap.to(mobileMenu, {
+    scaleY: 0,
+    opacity: 0,
+    duration: 0.3,
+    ease: "power2.in",
+    transformOrigin: "top",
+  });
+}
+
+// Toggle menu
+hamburger.addEventListener("pointerup", (e) => {
+  e.stopPropagation();
+  e.preventDefault();
+  isMenuOpen ? closeMenu() : openMenu();
+});
+
+// Close menu when clicking a link
+mobileLinks.forEach((item) => {
+  item.addEventListener("pointerup", () => {
+    const target = item.dataset.target;
+
+    closeMenu();
+
+    if (target === "projects") showModal(modals.projects);
+    if (target === "showreel") showModal(modals.showreel);
+    if (target === "about") showModal(modals.about);
+  });
+});
+
+// Optional: close menu if clicking outside
+document.addEventListener("pointerup", (e) => {
+  if (!isMenuOpen) return;
+  if (!mobileMenu.contains(e.target) && e.target !== hamburger) {
+    closeMenu();
+  }
+});
+
+
 
 // Debugging for blurBackgroundDetail
 projectDetailModals.forEach(modal => {
