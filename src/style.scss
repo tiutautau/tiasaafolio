@@ -25,16 +25,10 @@ body {
 // Theme Configuration
 $themes: (
   light: (
-    base-dark-purple: #9caa9f,
-    base-purple: #ff4141,
-    base-purple-200: #5e3636,
-    base-pink: #ffffff,
-    base-light-purple: #442e2e,
     header-text: #ffffff,
     text: #020202,
     svgs: #ffffff,
     base-overlay: rgba(32, 32, 32, 0.2),
-    overlay-bg: rgba(112, 252, 78, 0.952),
   ),
 );
 
@@ -79,15 +73,89 @@ $themes: (
     height: 100%;
     width: 100%;
     z-index: 2;
-    pointer-events: none;
+    pointer-events: auto;
   }
 }
 
+/* Hide on desktop */
+.hamburger,
+.mobile-menu {
+  display: none;
+}
 
-// Typography
-// <weight>: Use a value from 100 to 400
-// <uniquifier>: Use a unique and descriptive class name
+.hamburger {
+  z-index: 2000; /* higher than canvas and modals */
+  position: fixed;
+}
 
+/* Mobile & tablet */
+@include media.media("<=tablet") {
+  .hamburger {
+    display: flex;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2000;
+    width: 36px;
+    height: 30px;
+    flex-direction: column;
+    justify-content: space-between;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .hamburger span {
+  display: block;
+  height: 4px;
+  width: 100%;
+  background: #f2ebdd;
+  border-radius: 2px;
+  transform-origin: center;
+  transition: all 0.4s ease;
+}
+
+/* Hamburger → X */
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+}
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
+ .mobile-menu {
+  display: flex;
+  position: fixed;
+  top: 60px; /* below hamburger */
+  right: 20px;
+  background: rgba(20,20,20,0.95);
+  border-radius: 8px;
+  padding: 15px 20px;
+  z-index: 1999;
+  flex-direction: column;
+  align-items: flex-start;
+  transform: scaleY(0);
+  transform-origin: top;
+  opacity: 0;
+}
+
+.mobile-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+ .mobile-menu li {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  cursor: pointer;
+  color: #f2ebdd;
+}
+}
 
 .bricolage-grotesque {
   font-family: "Bricolage Grotesque", sans-serif;
@@ -175,66 +243,40 @@ h1, h2, h3 {
 h2 {
   font-weight: 600;
   font-size: 3.5rem;
+
+  @include media.media("<=tablet") {
+    font-size: 2.5rem;
+  }
 }
 
-p, ul, li {
-  font-family: "Lato", sans-serif;
+p {
+  font-family: "Bricolage Grotesque", sans-serif;
 }
 
 // project little headings
 h3 {
-  font-weight: 400;
   font-size: 1rem;
   padding: 8px 0px 12px 0px;
   line-height: 1;
   color: rgb(41, 41, 41);
+
+  @include media.media("<=tablet") {
+      font-size: 0.8rem;
+      padding: 6px 0px 0px 0px;
+    }
 }
 
-ul {
-  list-style: none;
-  padding-left: 2rem;
-
-  li {
-    position: relative;
-    margin-bottom: 1rem;
-
-    &:before {
-      content: "•";
-      position: absolute;
-      left: -1.5rem;
-      color: rgb(255, 255, 255);
-      font-size: 1.5em;
-    }
-
-    ul {
-      margin-top: 0.5rem;
-
-      li:before {
-        content: "◦";
-        font-size: 1.2em;
-      }
-
-      ul li:before {
-        content: "▪";
-        font-size: 1em;
-      }
-    }
-  }
-
-  li:hover {
-    &:before {
-      color: vars.$base-dark-purple;
-      transform: scale(1.2);
-      transition: all 0.2s ease;
-    }
-  }
-}
-
+//Tia Saarinen
 .top-left-corner {
   position: fixed;
   top: 30px;
   left: 62px;
   z-index: 1002; // Ensure logo is above other elements
+
+  @include media.media("<=tablet") {
+    top: 20px;
+    left: 20px;
+  }
 }
 
 .logo {
@@ -242,16 +284,24 @@ ul {
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 3px;
-  color: rgb(248, 246, 245);
+  color: #f2ebdd;
   user-select: none;
+
+  @include media.media("<=tablet") {
+    font-size: 16px;
+  }
 }
 
 .logo2 {
   font-family: "Bricolage Grotesque", sans-serif;
   font-size: 16px;
   font-weight: 400;
-  color: rgb(248, 246, 245);
+  color: #f2ebdd;
   user-select: none;
+
+  @include media.media("<=tablet") {
+    font-size: 14px;
+  }
 }
 
 // Buttons
@@ -272,13 +322,64 @@ ul {
   }
 
   @include media.media("<=tablet") {
-    font-size: 32px;
+    font-size: 26px;
+    color: rgb(235, 215, 201);
+  }
+
+  &.enter {
+    color: #8f4624;
+    font-size: 110px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.3, 1.56, 0.64, 1),
+              font-size 0.4s ease,
+              color 0.4s ease;
+
+    @include media.media("<=tablet") {
+      font-size: 60px;
+    }
+  }
+
+  &.welcome {
+    color: #F2EBDD;
+    font-size: 80px;
+
+      @include media.media("<=tablet") {
+      font-size: 40px;
+    }
+  }
+}
+
+// Enter without Sound Button
+.no-sound-button {
+  font-family: "Bricolage Grotesque", sans-serif;
+  @include vars.centered;
+  background-color: transparent;
+  padding: 12px;
+  color: #8f4624;
+  border: none;
+  border-radius: 10px;
+  font-weight: 400;
+  position: relative;
+  left: 50%;
+  cursor: pointer;
+  font-size: 40px;
+  transform: translate(-50%, -50%);
+
+  @include media.media("<=tablet") {
+    font-size: 22px;
+    cursor: pointer;
+  }
+
+  &:hover {
+    color: #fffefc;
+    cursor: pointer;
   }
 }
 
 .modal-exit-button {
   @include vars.centered;
-  position: absolute;
+  position: fixed;
   top: 1.5rem;
   left: 1.5rem;
   padding: 10px;
@@ -294,14 +395,10 @@ ul {
 
   @include media.media("<=tablet") {
     // Reset the top and left positions
-    top: auto;
-    left: 50%;
-    bottom: -3rem;
-    transform: translateX(-50%);
 
-    &:hover {
-      transform: translateX(-50%) scale(1.3);
-    }
+    top: 2vh;
+    left: 2.5vw;
+    padding: 4px;
   }
 }
 
@@ -314,6 +411,10 @@ ul {
   border-radius: 1rem;
   cursor: pointer;
   box-shadow: rgba(241, 174, 30, 0.6) 0px 0px 20px;
+
+  @include media.media("<=tablet") {
+    padding: 6px;
+  }
 }
 
 // Toggle Button
@@ -330,8 +431,8 @@ ul {
   }
 
   @include media.media("<=tablet") {
-    top: 30px;
-    right: 96px;
+    top: 20px;
+    right: 70px;
   }
 }
 
@@ -369,26 +470,7 @@ ul {
   'opsz' 24
 }
 
-// Enter without Sound Button
-.no-sound-button {
-  font-family: "Bricolage Grotesque", sans-serif;
-  @include vars.centered;
-  background-color: transparent;
-  padding: 12px;
-  color: #8f4624;
-  border: none;
-  border-radius: 10px;
-  font-weight: 400;
-  position: relative;
-  left: 50%;
-  font-size: 40px;
-  transform: translate(-50%, -50%);
 
-  &:hover {
-    color: #fffefc;
-    cursor: pointer;
-  }
-}
 
 
 // --- Background Blur for Modals ---
@@ -428,11 +510,17 @@ ul {
   left: 50%;
   top: 50%; // add this line
   width: 100%;
-  max-width: 1400px;
-  height: auto;
+  max-width: 72vw;
+  max-height: 85vh;
   transform: translate(-50%, -50%); // ensure this is present
   z-index: 150; // Ensure modals are above blurBackground
+  overflow-y: auto;
   display: none;
+
+  @include media.media("<=tablet") {
+      max-width: 90vw;
+      max-height: 80vh
+    } 
 }
 
 .modal-wrapper {
@@ -469,24 +557,17 @@ ul {
   }
 }
 
-.modal-paragraph-text {
-  font-size: 1rem;
-  @include media.media("<=tablet") {
-    font-size: 1.3rem;
-  }
-}
-
 .list-text {
   font-size: 1.2rem;
   @include media.media("<=tablet") {
-    font-size: 1.3rem;
+    font-size: 1rem;
   }
 }
 
 .list-text-2 {
   font-size: 1.2rem;
   @include media.media("<=tablet") {
-    font-size: 1.3rem;
+    font-size: 1rem;
   }
 }
 
@@ -498,7 +579,7 @@ ul {
   -webkit-overflow-scrolling: touch;
 
   @include media.media("<=tablet") {
-    height: 350px;
+    height: 180px;
   }
 }
 
@@ -512,13 +593,12 @@ ul {
   }
 }
 
-.base-image {
-  height: 100%;
-  width: 100%;
-  border-radius: 10px;
-  object-fit: cover;
-  border: 4px solid vars.$base-purple;
-}
+//.base-image {
+//  height: 100%;
+//  width: 100%;
+//  border-radius: 10px;
+//  object-fit: cover;
+//}
 
 .overlay {
   @include vars.centered;
@@ -574,12 +654,18 @@ ul {
   overflow-y: auto;
   z-index: 141;
 
+  @include media.media("<=tablet") {
+      max-height: 80vh;
+      max-width: 85vw;
+      padding: 6vh 8vw 6vh 8vw; // top, right, bottom, left (right side more padding)
+    }
+
   &::-webkit-scrollbar {
     width: 14px; // vertical scrollbar thickness
     height: 8px; // horizontal scrollbar thickness
   }
   &::-webkit-scrollbar-thumb {
-    background: #c2c2c2; // thumb color (purple/red)
+    background: #c2c2c2;
     border-radius: 8px;
   }
   &::-webkit-scrollbar-track {
@@ -605,6 +691,11 @@ ul {
     font-style: normal;
     text-align: center;
     margin-bottom: 2px;
+
+    @include media.media("<=tablet") {
+      font-size: 1.1rem;
+      text-align: left;
+    } 
   }
 }
 
@@ -694,6 +785,11 @@ ul {
     align-items: start; 
     gap: 3rem;
     grid-template-columns: auto auto; // each column gets 50%
+
+    @include media.media("<=tablet") {
+      grid-template-columns: repeat(1, 1fr);
+      gap: 2rem;
+    } 
   }
 
   .about-card img {
@@ -791,6 +887,11 @@ ul {
   line-height: 1.1;
   padding: 0px 30px 0px 0px;
   //box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
+  @include media.media("<=tablet") {
+    font-size: 14px;
+    padding: 0px 0px 0px 0px;
+  }
 }
 
 .project-text-apps {
@@ -799,6 +900,11 @@ ul {
   justify-content: normal;
   grid-template-columns: auto auto auto;
   font-weight: 600;
+
+  @include media.media("<=tablet") {
+    font-size: 16px;
+    padding-top: 4px;
+  }
 }
 
 /* Navigation arrows */
@@ -836,6 +942,11 @@ gap: 1.5rem; // Adjust spacing between items
 margin-top: 1.5rem;
 //grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); //shows as many cards as fit per row
 //grid-template-columns: repeat(3, 1fr); // Show 3 cards per row
+
+ @include media.media("<=tablet") {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.2rem;
+  }
 }
 
 .project-card {
@@ -870,7 +981,7 @@ transform: scale(1.04);
 }
 
 /* 📱 Responsive stacking */
-@media (max-width: 900px) {
+@media (max-width: 1300px) {
   .project-content {
     grid-template-columns: 1fr;
   }
@@ -884,43 +995,7 @@ transform: scale(1.04);
     max-height: 40vh;
   }
 }
-// --- Work ---
-//.work-image-wrapper {
-//  width: 100%;
-//  height: 350px;
-//  overflow: hidden;
-//  margin-bottom: 12px;
-//}
 
-//.work-base-image {
-//  height: 100%;
-//  width: 100%;
-//  border-radius: 24px;
-//  object-fit: cover;
-//  border: 4px solid vars.$base-purple;
-//}
-
-//.work-project {
-//  padding-top: 16px;
-//  @include vars.centered;
-//  flex-direction: column;
-//  gap: 28px;
-//  width: 80%;
-//  justify-content: start;
-//  height: 100%;
-//  @include media.media("<=tablet") {
-//    height: auto;
-//    width: 100%;
-//    padding-bottom: 24px;
-//  }
-//}
-
-//.work-project-wrapper {
-//  width: 100%;
-//  height: auto;
-//}
-
-//
 .xsm-margin-top {
   margin: 12px;
 }
@@ -1044,6 +1119,10 @@ transform: scale(1.04);
   display: grid;
   grid-template-columns: 1,2;
   row-gap: 40px;
+
+  @include media.media("<=tablet") {
+    row-gap: 26px;
+  }
 }
 
 // --- Instructions ---
@@ -1052,12 +1131,17 @@ transform: scale(1.04);
   position: absolute;
   bottom: 10%;
   left: 50%;
-  width: 90%;
+  max-width: 90vw;
   font-size: 21px;
   font-style: italic;
+  text-align: center;
   transform: translate(-50%, -50%);
-  font-family: "Avenir", sans-serif;
+  font-family: "Lato", sans-serif;
   color: #e9cca5;
+
+  @include media.media("<tablet") {
+    font-size: 16px;
+  }
 }
 
 .desktop-instructions {
@@ -1070,7 +1154,5 @@ transform: scale(1.04);
   @include media.media(">=tablet") {
     display: none;
   }
-  @include media.media("<=tablet") {
-    font-size: 28px;
-  }
 }
+
