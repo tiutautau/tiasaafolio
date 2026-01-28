@@ -117,13 +117,13 @@ $themes: (
 
 /* Hamburger → X */
 .hamburger.active span:nth-child(1) {
-  transform: rotate(45deg) translate(6px, 6px);
+  transform: rotate(45deg) translate(10px, 7px);
 }
 .hamburger.active span:nth-child(2) {
   opacity: 0;
 }
 .hamburger.active span:nth-child(3) {
-  transform: rotate(-45deg) translate(7px, -7px);
+  transform: rotate(-45deg) translate(10px, -8px);
 }
 
  .mobile-menu {
@@ -245,7 +245,8 @@ h2 {
   font-size: 3.5rem;
 
   @include media.media("<=tablet") {
-    font-size: 2.5rem;
+    font-size: 2rem;
+    text-align: center;
   }
 }
 
@@ -499,6 +500,12 @@ h3 {
   display: none; // Initially hidden
 }
 
+.blurBackground,
+.blurBackgroundDetail {
+  pointer-events: none; /* only for visual blur, not interactive */
+}
+
+
 // All MODALS
 .modal {
   @include vars.centered;
@@ -532,6 +539,10 @@ h3 {
 
 .project-detail {
   padding: 80px 60px 60px 60px; // top, right, bottom, left
+
+  @include media.media("<=tablet") {
+      padding: 60px 20px 30px 20px;
+    }
 }
 
 .sm-margin-top {
@@ -639,7 +650,46 @@ h3 {
   z-index: 1000;
 }
 
+// --- Scrollbar ---
+/* Ensure modals are scrollable */
+.modal {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+}
 
+/* ----------------- Chrome, Safari, Edge (WebKit) ----------------- */
+
+/* Scrollbar width */
+.modal::-webkit-scrollbar {
+  width: 12px;       /* vertical scrollbar width */
+  height: 8px;      /* horizontal scrollbar height */
+
+  @include media.media("<=tablet") {
+    width: 8px;       /* vertical scrollbar width */
+    }
+}
+
+/* Scrollbar track (background) */
+.modal::-webkit-scrollbar-track {
+  background: #e0e0e0;  /* light gray */
+  border-radius: 8px;
+
+  @include media.media("<=tablet") {
+    border-radius: 6px;
+    }
+}
+
+/* Scrollbar thumb (the draggable part) */
+.modal::-webkit-scrollbar-thumb {
+  background-color: #c2c2c2; /* darker gray */
+  border-radius: 8px;
+  background-clip: content-box;
+}
+
+/* Thumb hover */
+.modal::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+}
 
 
 // --- Modal Projects ---
@@ -655,23 +705,24 @@ h3 {
   z-index: 141;
 
   @include media.media("<=tablet") {
-      max-height: 80vh;
-      max-width: 85vw;
-      padding: 6vh 8vw 6vh 8vw; // top, right, bottom, left (right side more padding)
+      left: 50%;
+      max-height: 75vh;
+      max-width: 90vw;
+      padding: 6vh 5vw 6vh 5vw; // top, right, bottom, left (right side more padding)
     }
 
-  &::-webkit-scrollbar {
-    width: 14px; // vertical scrollbar thickness
-    height: 8px; // horizontal scrollbar thickness
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #c2c2c2;
-    border-radius: 8px;
-  }
-  &::-webkit-scrollbar-track {
-    background: #e0e0e0; // track color
-    border-radius: 8px;
-  }
+ //&::-webkit-scrollbar {
+ //  width: 14px; // vertical scrollbar thickness
+ //  height: 8px; // horizontal scrollbar thickness
+ //}
+ //&::-webkit-scrollbar-thumb {
+ //  background: #c2c2c2;
+ //  border-radius: 8px;
+ //}
+ //&::-webkit-scrollbar-track {
+ //  background: #e0e0e0; // track color
+ //  border-radius: 8px;
+ //}
 
   .modal.project-detail {
   max-height: 85vh;
@@ -718,6 +769,12 @@ h3 {
   max-height: 85vh;
   overflow-y: auto;
 
+  @include media.media("<=tablet") {
+      max-width: 90vw;
+      max-height: 75vh;
+      padding: 6vh 2vw 6vh 2vw;
+    }
+
   .modal-wrapper {
   gap: 14px;
   }
@@ -763,11 +820,22 @@ h3 {
   border-radius: 12px;
   // overflow-y: auto;
 
+  @include media.media("<=tablet") {
+      max-width: 90vw;
+      max-height: 75vh;
+      padding: 6vh 5vw 6vh 5vw;
+    }
+
   .modal-title {
     font-size: 3rem;
     margin-bottom: 16px;
     color: rgb(0, 0, 0);
     text-align: center;
+
+    @include media.media("<=tablet") {
+      font-size: 2rem;
+      margin-bottom: 0px;
+    }
   }
 
   .modal-name {
@@ -833,6 +901,10 @@ h3 {
     font-weight: 400;
     padding: 0px 40px 0px 0px;
     text-align: left;
+
+    @include media.media("<=tablet") {
+      font-size: 1rem;
+    } 
   }
 }
 
@@ -847,10 +919,18 @@ h3 {
   align-items: start;
   margin-top: 1.8rem;
   margin-bottom: 2rem;
+
+  @include media.media("<=tablet") {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    margin-top: 1.4rem;
+    }
 }
 
 .project-detail .modal {
   padding: 40px 40px 40px 40px; // equal padding on all sides
+
+  
 }
 
 /* 🖼 Slideshow side */
@@ -862,6 +942,13 @@ h3 {
   overflow: hidden;
   max-height: 80vh;
   position: relative; // Ensure the slideshow container is the positioning context
+
+  @include media.media("<=tablet") {
+      left: 50%;
+      transform: translateX(-50%);
+      max-height: 75vh;
+      max-width: 90vw;
+    }
 }
 
 .project-detail .slideshow img {
@@ -871,6 +958,27 @@ h3 {
   border-radius: 12px;
 }
 
+.slideVideo {
+  max-height: 380px;
+  max-width: 640px;
+  border-radius: 12px;
+  object-fit: contain;
+
+  @include media.media("<=tablet") {
+      max-height: 70vh;
+      max-width: 65vw;
+    }
+}
+
+.ytVideo {
+  border-radius: 12px;
+
+  @include media.media("<=tablet") {
+      max-height: 70vh;
+      max-width: 65vw;
+    }
+}
+
 /* ✍️ Text side */
 .project-info {
   display: flex;
@@ -878,6 +986,10 @@ h3 {
   gap: 1rem;
   color: #2b1b11;
   //max-height: 60vh;
+
+  @include media.media("<=tablet") {
+    padding: 0px 24px 0px 24px;
+  }
 }
 
 .project-text-kappale {
@@ -904,6 +1016,9 @@ h3 {
   @include media.media("<=tablet") {
     font-size: 16px;
     padding-top: 4px;
+    gap: 4px;
+    align-content: start;
+    grid-template-columns: auto;
   }
 }
 
@@ -989,10 +1104,6 @@ transform: scale(1.04);
   .project-detail .slideshow,
   .project-info {
     max-height: none;
-  }
-
-  .project-detail .slideshow img {
-    max-height: 40vh;
   }
 }
 

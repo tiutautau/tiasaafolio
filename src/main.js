@@ -185,9 +185,6 @@ const showModal = (modal) => {
 
 const hideModal = (modal) => {
   console.log("Closing modal:", modal);
-  overlay.classList.remove("active"); // <--- DISABLE overlay
-  isModalOpen = false;
-  controls.update(); // Ensure controls are updated
 
   gsap.to(modal, {
     opacity: 0,
@@ -195,12 +192,29 @@ const hideModal = (modal) => {
     duration: 0.5,
     onComplete: () => {
       modal.style.display = "none";
-      blurBackground.style.display = "none"; // Ensure blur background is hidden
-      blurBackgroundDetail.style.display = "none"; // Ensure blurBackgroundDetail is hidden
-      document.querySelector("#experience-canvas").style.pointerEvents = "auto"; // Re-enable canvas interactions
+
+      // Hide blur background related to this modal only
+      if (modal.classList.contains("project-detail")) {
+        blurBackgroundDetail.style.display = "none";
+      } else {
+        blurBackground.style.display = "none";
+      }
+
+      // Check if any other modal is still open
+      const anyModalOpen = [...document.querySelectorAll('.modal')]
+        .some(m => m.style.display === 'block');
+
+      if (!anyModalOpen) {
+        overlay.classList.remove("active");
+        document.querySelector("#experience-canvas").style.pointerEvents = "auto";
+        isModalOpen = false;
+      }
+
+      controls.update(); // ensure OrbitControls are synced
     },
   });
 };
+
 
 const xAxisFans = []
 
@@ -286,6 +300,12 @@ manager.onLoad = function () { //Enter button appears when everything is loaded
 
   loadingScreenButton.addEventListener("mouseleave", () => {
     loadingScreenButton.style.transform = "none";
+  });
+
+  noSoundButton.addEventListener("touchend", (e) => {
+  touchHappened = true;
+    e.preventDefault();
+    handleEnter(false);
   });
 
   noSoundButton.addEventListener("click", (e) => {
