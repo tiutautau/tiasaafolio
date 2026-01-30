@@ -761,7 +761,7 @@ h3 {
 // --- Showreel ---
 .modal.showreel {
   width: 100%;
-  max-width: 70vw;
+  max-width: 50vw;
   display: none;
   flex-direction: column;
   padding: 60px 20px 40px 20px;
@@ -786,12 +786,24 @@ h3 {
     margin-bottom: 12px;
   }
 
+  .project-card {
+    background: white;
+
+    @include media.media("<=tablet") {
+      align-content: center;
+    }
+  }
+
   .project-media {
     width: auto;
     max-height: 80vh;
     aspect-ratio: 16 / 9;
     position: relative;
     overflow: hidden;
+
+    @include media.media("<=tablet") {
+      align-content: center;
+    }
   }
 
   .showreel-description {
@@ -812,7 +824,7 @@ h3 {
 // --- Modal About ---
 .modal.about {
   width: 100%;
-  max-width: 65vw;
+  max-width: 50vw;
   max-height: 85vh;
   display: none;
   flex-direction: column;
@@ -974,8 +986,10 @@ h3 {
   border-radius: 12px;
 
   @include media.media("<=tablet") {
-      max-height: 70vh;
-      max-width: 65vw;
+      max-width: 80%;
+      height: 100%;
+      align-content: center;
+      display: block;
     }
 }
 

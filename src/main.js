@@ -1051,6 +1051,7 @@ initSlideshow("mySlides4");
 initSlideshow("mySlides5");
 initSlideshow("mySlides6");
 initSlideshow("mySlides7");
+initSlideshow("mySlides8");
 
 // Ensure render() is properly called only once
 render(); 
