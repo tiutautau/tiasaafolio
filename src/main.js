@@ -653,7 +653,6 @@ muteToggleButton.addEventListener(
 
 window.addEventListener("click", handleRaycasterInteraction);
 
-
 // Array to hold video textures for updating
 const videoTextures = [];
 
@@ -1052,6 +1051,9 @@ initSlideshow("mySlides5");
 initSlideshow("mySlides6");
 initSlideshow("mySlides7");
 initSlideshow("mySlides8");
+initSlideshow("mySlides9");
+initSlideshow("mySlides10");
+initSlideshow("mySlides11");
 
 // Ensure render() is properly called only once
 render(); 

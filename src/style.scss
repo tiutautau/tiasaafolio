@@ -5,7 +5,7 @@
 
 // Global Styles
 :root {
-  font-family: Fruktur, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -251,7 +251,7 @@ h2 {
 }
 
 p {
-  font-family: "Bricolage Grotesque", sans-serif;
+  font-family: "Helvetica", "Arial", sans-serif;
 }
 
 // project little headings
@@ -761,10 +761,10 @@ h3 {
 // --- Showreel ---
 .modal.showreel {
   width: 100%;
-  max-width: 50vw;
+  max-width: 900px;
   display: none;
   flex-direction: column;
-  padding: 60px 20px 40px 20px;
+  padding: 60px 40px 20px 40px;
   border-radius: 12px;
   max-height: 85vh;
   overflow-y: auto;
@@ -809,12 +809,36 @@ h3 {
   .showreel-description {
     font-size: 1.1rem;
     color: rgb(27, 27, 27);
-    font-weight: 700;
+    font-weight: 400;
+    line-height: 1.2;
     font-style: normal;
-    margin-top: 10px;
-    margin-bottom: 24px;
+    margin-top: 6px;
+    margin-bottom: 20px;
     text-align: center;
+
+    @include media.media("<=tablet") {
+      font-size: 1rem;
+      margin-top: 0px;
+      padding: 0px 20px 0px 20px;
+    } 
   }
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.video-wrapper iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .showreel .modal-content-wrapper {
@@ -907,10 +931,10 @@ h3 {
   }
 
   .about-text2 {
-    font-size: 1.1rem;
+    font-size: 1rem;
     margin-top: 30px;
     line-height: 1.2;
-    font-weight: 400;
+    font-weight: 200;
     padding: 0px 40px 0px 0px;
     text-align: left;
 
@@ -918,6 +942,18 @@ h3 {
       font-size: 1rem;
     } 
   }
+}
+
+.project-content-vertical {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 3rem;
+  
+  @include media.media("<=tablet") {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    margin-top: 1.4rem;
+    }
 }
 
 /* =========================================
@@ -971,27 +1007,35 @@ h3 {
 }
 
 .slideVideo {
-  max-height: 380px;
-  max-width: 640px;
   border-radius: 12px;
+  background: #000;
+}
+
+/* Horizontal (default) */
+.slideVideo.horizontal {
+  width: 100%;
+  max-height: 55vh;
   object-fit: contain;
-
-  @include media.media("<=tablet") {
-      max-height: 70vh;
-      max-width: 65vw;
-    }
 }
 
-.ytVideo {
-  border-radius: 12px;
-
-  @include media.media("<=tablet") {
-      max-width: 80%;
-      height: 100%;
-      align-content: center;
-      display: block;
-    }
+/* Vertical videos */
+.slideVideo.vertical {
+  max-height: 70vh;
+  width: auto;
+  margin: 0 auto;
+  display: block;
 }
+
+//.ytVideo {
+//  border-radius: 12px;
+//
+//  @include media.media("<=tablet") {
+//      max-width: 80%;
+//      height: 100%;
+//      align-content: center;
+//      display: block;
+//    }
+//}
 
 /* ✍️ Text side */
 .project-info {
